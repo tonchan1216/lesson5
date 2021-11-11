@@ -1,5 +1,6 @@
 package com.example.lesson5.backend.app.model;
 
+import com.example.lesson5.backend.domain.model.entity.Group;
 import com.example.lesson5.common.web.model.GroupResource;
 
 import java.util.List;

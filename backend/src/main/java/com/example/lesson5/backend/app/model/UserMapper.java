@@ -18,8 +18,7 @@ public interface UserMapper {
                 .loginId(user.getLoginId())
                 .isLogin(user.getLogin())
                 .address(AddressMapper.map(user.getAddressByUserId()))
-                .emailList(user.getEmailsByUserId().stream().map(
-                                EmailMapper::map).collect(Collectors.toList()))
+                .emailList(user.getEmailsByUserId().stream().map(EmailMapper::map).collect(Collectors.toList()))
                 .build();
     }
 
@@ -31,6 +30,7 @@ public interface UserMapper {
         if(Objects.isNull(user.getEmailList())){
             user.setEmailList(new ArrayList<>());
         }
+
         return User.builder()
                 .userId(user.getUserId())
                 .firstName(user.getFirstName())

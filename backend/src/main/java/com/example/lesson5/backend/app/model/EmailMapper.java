@@ -1,5 +1,6 @@
 package com.example.lesson5.backend.app.model;
 
+import com.example.lesson5.backend.domain.model.entity.Email;
 import com.example.lesson5.common.web.model.EmailResource;
 
 import java.util.List;

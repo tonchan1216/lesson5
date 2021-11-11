@@ -8,14 +8,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import com.example.lesson5.backend.domain.model.entity.*;
 import org.springframework.data.jpa.domain.Specification;
-
-//import org.debugroom.mynavi.sample.continuous.integration.backend.domain.model.entity.Group;
-//import org.debugroom.mynavi.sample.continuous.integration.backend.domain.model.entity.Group_;
-//import org.debugroom.mynavi.sample.continuous.integration.backend.domain.model.entity.Membership;
-//import org.debugroom.mynavi.sample.continuous.integration.backend.domain.model.entity.Membership_;
-//import org.debugroom.mynavi.sample.continuous.integration.backend.domain.model.entity.User_;
-//import org.debugroom.mynavi.sample.continuous.integration.backend.domain.model.entity.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

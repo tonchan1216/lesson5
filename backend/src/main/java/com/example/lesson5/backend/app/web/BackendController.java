@@ -1,9 +1,6 @@
 package com.example.lesson5.backend.app.web;
 
-import java.util.List;
-import javax.validation.groups.Default;
-
-import com.example.lesson5.backend.app.model.Group;
+import com.example.lesson5.backend.app.model.*;
 import com.example.lesson5.backend.domain.service.SampleManyToManyService;
 import com.example.lesson5.backend.domain.service.SampleOneToManyService;
 import com.example.lesson5.backend.domain.service.SampleOneToOneService;
@@ -15,22 +12,10 @@ import com.example.lesson5.common.web.model.GroupResource;
 import com.example.lesson5.common.web.model.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.example.lesson5.backend.app.model.Address;
-import com.example.lesson5.backend.app.model.AddressMapper;
-import com.example.lesson5.backend.app.model.Email;
-import com.example.lesson5.backend.app.model.EmailMapper;
-import com.example.lesson5.backend.app.model.GroupMapper;
-import com.example.lesson5.backend.app.model.User;
-import com.example.lesson5.backend.app.model.UserMapper;
+import javax.validation.groups.Default;
+import java.util.List;
 
 
 @RestController
