@@ -47,7 +47,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "first_name", nullable = true, length = 512)
+    @Column(name = "first_name", length = 512)
     public String getFirstName() {
         return firstName;
     }
@@ -57,7 +57,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "family_name", nullable = true, length = 512)
+    @Column(name = "family_name", length = 512)
     public String getFamilyName() {
         return familyName;
     }
@@ -67,7 +67,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "login_id", nullable = true, length = 32)
+    @Column(name = "login_id", length = 32)
     public String getLoginId() {
         return loginId;
     }
@@ -77,7 +77,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "is_login", nullable = true)
+    @Column(name = "is_login")
     public Boolean getLogin() {
         return isLogin;
     }
@@ -87,7 +87,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "ver", nullable = true)
+    @Column(name = "ver")
     @Version
     public Integer getVer() {
         return ver;
@@ -98,7 +98,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "last_updated_at", nullable = true)
+    @Column(name = "last_updated_at")
     public Timestamp getLastUpdatedAt() {
         return lastUpdatedAt;
     }

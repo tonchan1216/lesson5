@@ -42,7 +42,7 @@ public class Membership {
     }
 
     @Basic
-    @Column(name = "ver", nullable = true)
+    @Column(name = "ver")
     @Version
     public Integer getVer() {
         return ver;
@@ -53,7 +53,7 @@ public class Membership {
     }
 
     @Basic
-    @Column(name = "last_updated_at", nullable = true)
+    @Column(name = "last_updated_at")
     public Timestamp getLastUpdatedAt() {
         return lastUpdatedAt;
     }

@@ -32,7 +32,7 @@ public class Group {
     }
 
     @Basic
-    @Column(name = "group_name", nullable = true, length = 512)
+    @Column(name = "group_name", length = 512)
     public String getGroupName() {
         return groupName;
     }
@@ -42,7 +42,7 @@ public class Group {
     }
 
     @Basic
-    @Column(name = "ver", nullable = true)
+    @Column(name = "ver")
     @Version
     public Integer getVer() {
         return ver;
@@ -53,7 +53,7 @@ public class Group {
     }
 
     @Basic
-    @Column(name = "last_updated_at", nullable = true)
+    @Column(name = "last_updated_at")
     public Timestamp getLastUpdatedAt() {
         return lastUpdatedAt;
     }

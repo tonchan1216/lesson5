@@ -42,7 +42,7 @@ public class Email {
     }
 
     @Basic
-    @Column(name = "email", nullable = true, length = 256)
+    @Column(name = "email", length = 256)
     public String getEmail() {
         return email;
     }
@@ -52,7 +52,7 @@ public class Email {
     }
 
     @Basic
-    @Column(name = "ver", nullable = true)
+    @Column(name = "ver")
     @Version
     public Integer getVer() {
         return ver;
@@ -63,7 +63,7 @@ public class Email {
     }
 
     @Basic
-    @Column(name = "last_updated_at", nullable = true)
+    @Column(name = "last_updated_at")
     public Timestamp getLastUpdatedAt() {
         return lastUpdatedAt;
     }

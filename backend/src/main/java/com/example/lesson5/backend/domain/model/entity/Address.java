@@ -31,7 +31,7 @@ public class Address {
     }
 
     @Basic
-    @Column(name = "zip_code", nullable = true, length = 8)
+    @Column(name = "zip_code", length = 8)
     public String getZipCode() {
         return zipCode;
     }
@@ -41,7 +41,7 @@ public class Address {
     }
 
     @Basic
-    @Column(name = "address", nullable = true, length = 512)
+    @Column(name = "address", length = 512)
     public String getAddress() {
         return address;
     }
@@ -51,7 +51,7 @@ public class Address {
     }
 
     @Basic
-    @Column(name = "ver", nullable = true)
+    @Column(name = "ver")
     @Version
     public Integer getVer() {
         return ver;
@@ -62,7 +62,7 @@ public class Address {
     }
 
     @Basic
-    @Column(name = "last_updated_at", nullable = true)
+    @Column(name = "last_updated_at")
     public Timestamp getLastUpdatedAt() {
         return lastUpdatedAt;
     }
