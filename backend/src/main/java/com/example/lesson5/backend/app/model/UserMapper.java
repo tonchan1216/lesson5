@@ -1,7 +1,7 @@
 package com.example.lesson5.backend.app.model;
 
-import com.example.lesson5.common.web.model.UserResource;
 import com.example.lesson5.backend.domain.model.entity.User;
+import com.example.lesson5.common.web.model.UserResource;
 
 import java.util.ArrayList;
 import java.util.List;

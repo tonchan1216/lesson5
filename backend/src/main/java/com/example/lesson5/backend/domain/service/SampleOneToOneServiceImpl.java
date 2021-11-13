@@ -1,10 +1,5 @@
 package com.example.lesson5.backend.domain.service;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-
 import com.example.lesson5.backend.domain.model.entity.Address;
 import com.example.lesson5.backend.domain.model.entity.User;
 import com.example.lesson5.backend.domain.repository.UserRepository;
@@ -16,6 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 
 @Transactional
 @Service

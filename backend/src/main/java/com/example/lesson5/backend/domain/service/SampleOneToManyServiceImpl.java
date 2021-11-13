@@ -1,13 +1,5 @@
 package com.example.lesson5.backend.domain.service;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import com.example.lesson5.backend.domain.model.entity.Email;
 import com.example.lesson5.backend.domain.model.entity.EmailPK;
 import com.example.lesson5.backend.domain.model.entity.User;
@@ -19,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
 
 @Service
 @Transactional
@@ -37,7 +31,7 @@ public class SampleOneToManyServiceImpl implements SampleOneToManyService{
     public List<Email> getEmailsOf(User user) throws BusinessException {
         Optional<User> optionalUser = userRepository.findById(user.getUserId());
         if(optionalUser.isPresent()){
-            return optionalUser.get().getEmailsByUserId().stream().collect(Collectors.toList());
+            return new ArrayList<>(optionalUser.get().getEmailsByUserId());
         }else{
             String errorCode = "E0001";
             throw new BusinessException(errorCode, messageSource.getMessage(
@@ -56,8 +50,7 @@ public class SampleOneToManyServiceImpl implements SampleOneToManyService{
         if(optionalUser.isPresent()){
             Collection<Email> emails = optionalUser.get().getEmailsByUserId();
             email.setEmailNo(
-                    emails.stream().sorted(Comparator.comparing(Email::getEmailNo).reversed())
-                            .findFirst().get().getEmailNo()+1);
+                    emails.stream().max(Comparator.comparing(Email::getEmailNo)).get().getEmailNo()+1);
             email.setVer(0);
             email.setLastUpdatedAt(DateUtil.now());
             emails.add(email);
@@ -89,7 +82,7 @@ public class SampleOneToManyServiceImpl implements SampleOneToManyService{
 
     @Override
     public Email delete(Email email) throws BusinessException {
-        Email deleteEmail = null;
+        Email deleteEmail;
         if(Objects.isNull(email.getEmail())){
             Optional<Email> optionalEmail = emailRepository.findById(
                     EmailPK.builder()
@@ -122,8 +115,7 @@ public class SampleOneToManyServiceImpl implements SampleOneToManyService{
         Optional<User> optionalUser = userRepository.findById(user.getUserId());
         if(optionalUser.isPresent()){
             User deleteUser = optionalUser.get();
-            List<Email> deleteEmails = deleteUser.getEmailsByUserId()
-                .stream().collect(Collectors.toList());
+            List<Email> deleteEmails = new ArrayList<>(deleteUser.getEmailsByUserId());
             deleteUser.getEmailsByUserId().clear();
             return deleteEmails;
         }else {

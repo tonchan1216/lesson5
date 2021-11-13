@@ -1,25 +1,19 @@
 package com.example.lesson5.backend.domain.service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
-
-import com.example.lesson5.backend.domain.repository.UserRepository;
+import com.example.lesson5.backend.domain.model.entity.Address;
+import com.example.lesson5.backend.domain.model.entity.Email;
 import com.example.lesson5.backend.domain.model.entity.Membership;
+import com.example.lesson5.backend.domain.model.entity.User;
+import com.example.lesson5.backend.domain.repository.UserRepository;
+import com.example.lesson5.common.apinfra.exception.BusinessException;
+import com.example.lesson5.common.apinfra.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.lesson5.backend.domain.model.entity.Address;
-import com.example.lesson5.backend.domain.model.entity.Email;
-import com.example.lesson5.backend.domain.model.entity.User;
-import com.example.lesson5.common.apinfra.exception.BusinessException;
-import com.example.lesson5.common.apinfra.util.DateUtil;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Transactional
 @Service
@@ -51,7 +45,7 @@ public class SampleServiceImpl implements SampleService{
     @Override
     public User add(User user) throws BusinessException {
         if(!userRepository.existsByLoginId(user.getLoginId())){
-            Long newUserId = userRepository.getMaxUserId() + 1;
+            long newUserId = userRepository.getMaxUserId() + 1;
             user.setUserId(newUserId);
             user.setVer(0);
             user.setLastUpdatedAt(DateUtil.now());
@@ -62,10 +56,9 @@ public class SampleServiceImpl implements SampleService{
                 addAddress.setLastUpdatedAt(DateUtil.now());
             }
             if(Objects.nonNull(user.getEmailsByUserId())){
-                List<Email> addEmails = user.getEmailsByUserId()
-                        .stream().collect(Collectors.toList());
+                List<Email> addEmails = new ArrayList<>(user.getEmailsByUserId());
                 AtomicLong i = new AtomicLong();
-                addEmails.stream().forEach(
+                addEmails.forEach(
                         email -> {
                             email.setUserId(newUserId);
                             email.setEmailNo(i.getAndIncrement());
@@ -75,9 +68,8 @@ public class SampleServiceImpl implements SampleService{
                 );
             }
             if(Objects.nonNull(user.getMembershipsByUserId())){
-                List<Membership> addMemberships = user.getMembershipsByUserId()
-                        .stream().collect(Collectors.toList());
-                addMemberships.stream().forEach(
+                List<Membership> addMemberships = new ArrayList<>(user.getMembershipsByUserId());
+                addMemberships.forEach(
                         membership -> {
                             membership.setUserId(newUserId);
                             membership.setVer(0);
@@ -125,7 +117,7 @@ public class SampleServiceImpl implements SampleService{
             }
             Collection<Email> emails = user.getEmailsByUserId();
             if(Objects.nonNull(emails)){
-                emails.stream().forEach(email1 -> updateUser.getEmailsByUserId().stream()
+                emails.forEach(email1 -> updateUser.getEmailsByUserId().stream()
                 .filter(email2 -> email2.getEmailNo() == email1.getEmailNo())
                 .findFirst().get().setEmail(email1.getEmail())
                 );

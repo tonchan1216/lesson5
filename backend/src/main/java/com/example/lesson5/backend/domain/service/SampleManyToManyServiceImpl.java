@@ -1,10 +1,5 @@
 package com.example.lesson5.backend.domain.service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-
 import com.example.lesson5.backend.domain.model.entity.Group;
 import com.example.lesson5.backend.domain.model.entity.Membership;
 import com.example.lesson5.backend.domain.model.entity.User;
@@ -19,6 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -57,7 +57,7 @@ public class SampleManyToManyServiceImpl implements SampleManyToManyService{
         if(optionalUser.isPresent()){
             User user = optionalUser.get();
             Collection<Membership> memberships = user.getMembershipsByUserId();
-            if(!memberships.stream().anyMatch(
+            if(memberships.stream().noneMatch(
                     membership -> membership.getGroupId()==group.getGroupId())){
                 user.getMembershipsByUserId().add(
                         Membership.builder()
