@@ -26,24 +26,30 @@ public class User implements Serializable {
     @NotNull(groups = {UpdateUser.class})
     @Min(0)
     private long userId;
+
     @NotNull(groups = {AddUser.class})
     @Size(min = 1, max = 50)
-    @Pattern(regexp="^[^ =#$%&./<>?¥^¥~¥[¥]¥(¥)¥¥]+$")
+    @Pattern(regexp="^[^ =#$%&./<>?^~\\[\\]()]+$")
     private String firstName;
+
     @NotNull(groups = {AddUser.class})
     @Size(min = 1, max = 50 )
-    @Pattern(regexp="^[^ =#$%&./<>?¥^¥~¥[¥]¥(¥)¥¥]+$")
+    @Pattern(regexp="^[^ =#$%&./<>?^~\\[\\]()]+$")
     private String familyName;
+
     @NotNull(groups = {AddUser.class, FindUserOfLoginId.class})
     @Size(min = 1, max = 32)
-    @Pattern(regexp = "[a-zA-Z0-9¥.¥-]*")
+    @Pattern(regexp = "[a-zA-Z0-9.\\-]*")
     private String loginId;
+
     private boolean isLogin;
+
     @Valid
     private Address address;
+
     @Valid
     private List<Email> emailList;
+
     @Valid
     private List<Group> groups;
-
 }

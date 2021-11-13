@@ -18,11 +18,12 @@ public class Address implements Serializable {
 
     @Min(0)
     private long userId;
-    @NotNull(groups = {User.AddUser.class})
-    @Pattern(regexp = "[0-9¥-]*")
-    private String zipCode;
-    @NotNull(groups = {User.AddUser.class})
-    @Pattern(regexp="^[^=#$%&./<>?¥^¥~¥[¥]¥(¥)¥¥]+$")
-    private String address;
 
+    @NotNull(groups = {User.AddUser.class})
+    @Pattern(regexp = "[0-9\\-]*")
+    private String zipCode;
+
+    @NotNull(groups = {User.AddUser.class})
+    @Pattern(regexp="^[^=#$%&./<>?^~\\[\\]()]+$")
+    private String address;
 }
