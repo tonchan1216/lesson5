@@ -44,7 +44,9 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
+
 
 @RunWith(Enclosed.class)
 public class BackendControllerTest {
@@ -126,13 +128,13 @@ public class BackendControllerTest {
             Mockito.when(sampleService.findOne(mockUser1)).thenReturn(mockUser1);
             Mockito.when(sampleService.findOne(mockUser2)).thenReturn(mockUser2);
             Mockito.when(sampleService.findOne(User.builder().userId(3).build()))
-                    .thenThrow(new BusinessException("E0001", "", new Long[]{3L}));
+                    .thenThrow(new BusinessException("E0001", "", (Object[]) new Long[]{3L}));
             Mockito.when(sampleService.add(mockUser2)).thenReturn(mockUser2);
             Mockito.when(sampleService.update(mockUser2)).thenReturn(mockUser2);
             Mockito.when(sampleService.findUserHave("taro.mynavi"))
                     .thenReturn(mockUser1);
             Mockito.when(sampleService.findUserHave("jiro.mynavi"))
-                    .thenThrow(new BusinessException("E0008", "", new String[]{"jiro.mynavi"}));
+                    .thenThrow(new BusinessException("E0008", "", (Object[]) new String[]{"jiro.mynavi"}));
 
         }
 
@@ -593,7 +595,7 @@ public class BackendControllerTest {
 
             UserResource userResource = responseEntity.getBody();
 
-            assertThat(userResource.getFirstName(), is("hanako"));
+            assertThat(Objects.requireNonNull(userResource).getFirstName(), is("hanako"));
             assertThat(userResource.getFamilyName(), is("mynavi"));
             assertThat(userResource.getLoginId(), is("hanako.mynavi"));
             assertThat(userResource.getAddress().getZipCode(), is("300-0000"));
@@ -611,7 +613,7 @@ public class BackendControllerTest {
             BusinessExceptionResponse businessExceptionResponse = (BusinessExceptionResponse)
                     responseEntity.getBody();
 
-            assertThat(businessExceptionResponse.getBusinessException().getCode(), is("E0001"));
+            assertThat(Objects.requireNonNull(businessExceptionResponse).getBusinessException().getCode(), is("E0001"));
             assertThat(businessExceptionResponse.getBusinessException().getArgs(), is(new Integer[]{4}));
 
         }
@@ -687,7 +689,7 @@ public class BackendControllerTest {
 
             UserResource updateUserResource = updateResponseEntity.getBody();
 
-            assertThat(updateUserResource.getFirstName(), is("shiro"));
+            assertThat(Objects.requireNonNull(updateUserResource).getFirstName(), is("shiro"));
             assertThat(updateUserResource.getFamilyName(), is("mynavi"));
             assertThat(updateUserResource.getLoginId(), is("shiro.mynavi"));
             assertThat(updateUserResource.getAddress().getZipCode(), is("300-0000"));
@@ -712,7 +714,7 @@ public class BackendControllerTest {
 
             UserResource deleteUserResource = updateResponseEntity.getBody();
 
-            assertThat(deleteUserResource.getFirstName(), is("taro"));
+            assertThat(Objects.requireNonNull(deleteUserResource).getFirstName(), is("taro"));
         }
 
         @Test
@@ -725,7 +727,7 @@ public class BackendControllerTest {
 
             UserResource userResource = responseEntity.getBody();
 
-            assertThat(userResource.getFirstName(), is("jiro"));
+            assertThat(Objects.requireNonNull(userResource).getFirstName(), is("jiro"));
 
         }
 
@@ -738,7 +740,7 @@ public class BackendControllerTest {
 
             AddressResource addressResource = responseEntity.getBody();
 
-            assertThat(addressResource.getUserId(), is(1L));
+            assertThat(Objects.requireNonNull(addressResource).getUserId(), is(1L));
             assertThat(addressResource.getZipCode(), is("300-0000"));
             assertThat(addressResource.getAddress(), is("Tonde Saitama"));
 
@@ -803,7 +805,7 @@ public class BackendControllerTest {
 
             AddressResource addressResource = updateResponseEntity.getBody();
 
-            assertThat(addressResource.getZipCode(), is("100-0000"));
+            assertThat(Objects.requireNonNull(addressResource).getZipCode(), is("100-0000"));
             assertThat(addressResource.getAddress(), is("Tokyo Chiyoda"));
 
         }
@@ -830,7 +832,7 @@ public class BackendControllerTest {
         @Test
         public void findUserHavingEmailNormalTest(){
 
-            MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.set("email", "jiro.mynavi@debugroom.org");
 
             ResponseEntity<UserResource> responseEntity = testRestTemplate
@@ -841,7 +843,7 @@ public class BackendControllerTest {
 
             UserResource userResource = responseEntity.getBody();
 
-            assertThat(userResource.getFirstName(), is("jiro"));
+            assertThat(Objects.requireNonNull(userResource).getFirstName(), is("jiro"));
 
         }
 
@@ -861,7 +863,7 @@ public class BackendControllerTest {
 
             EmailResource emailResource = responseEntity.getBody();
 
-            assertThat(emailResource.getEmailNo(), is(1L));
+            assertThat(Objects.requireNonNull(emailResource).getEmailNo(), is(1L));
             assertThat(emailResource.getEmail(), is("jiro.mynavi2@debugroom.org"));
 
         }
@@ -884,7 +886,7 @@ public class BackendControllerTest {
 
             EmailResource emailResource = responseEntity.getBody();
 
-            assertThat(emailResource.getEmail(), is("jiro.mynavi1@debugroom.org"));
+            assertThat(Objects.requireNonNull(emailResource).getEmail(), is("jiro.mynavi1@debugroom.org"));
 
         }
 
@@ -904,7 +906,7 @@ public class BackendControllerTest {
                     EmailResource.class);
             EmailResource emailResource = responseEntity.getBody();
 
-            assertThat(emailResource.getEmail(), is("jiro.mynavi2@debugroom.org"));
+            assertThat(Objects.requireNonNull(emailResource).getEmail(), is("jiro.mynavi2@debugroom.org"));
 
         }
 
@@ -979,7 +981,7 @@ public class BackendControllerTest {
 
             UserResource userResource = responseEntity.getBody();
 
-            assertThat(userResource.getFirstName(), is("jiro"));
+            assertThat(Objects.requireNonNull(userResource).getFirstName(), is("jiro"));
 
         }
 
@@ -991,7 +993,7 @@ public class BackendControllerTest {
                     HttpMethod.DELETE, null, UserResource.class);
             UserResource userResource = responseEntity.getBody();
 
-            assertThat(userResource.getFirstName(), is("jiro"));
+            assertThat(Objects.requireNonNull(userResource).getFirstName(), is("jiro"));
 
         }
 
@@ -1004,7 +1006,7 @@ public class BackendControllerTest {
 
             GroupResource groupResource = responseEntity.getBody();
 
-            assertThat(groupResource.getGroupName(), is("GroupA"));
+            assertThat(Objects.requireNonNull(groupResource).getGroupName(), is("GroupA"));
 
         }
 
