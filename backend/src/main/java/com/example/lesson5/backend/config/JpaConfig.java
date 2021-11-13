@@ -38,7 +38,7 @@ public class JpaConfig {
         properties.setProperty("hibernate.format_sql", "true");
 
         LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
-        emfb.setPackagesToScan("org.debugroom.mynavi.sample.continuous.integration.backend.domain.model.entity");
+        emfb.setPackagesToScan("com.example.lesson5.backend.domain.model.entity");
         emfb.setJpaProperties(properties);
         emfb.setJpaVendorAdapter(adapter);
         emfb.setDataSource(dataSource);

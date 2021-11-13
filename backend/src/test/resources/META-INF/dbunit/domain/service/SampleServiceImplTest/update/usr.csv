@@ -1,0 +1,4 @@
+"USER_ID", "FIRST_NAME", "FAMILY_NAME", "LOGIN_ID", "IS_LOGIN", "VER"
+0, shiro, mynavi, shiro.mynavi, false, 2
+1, hanako, mynavi, hanako.mynavi, false, 0
+2, jiro, mynavi, jiro.mynavi, false, 0

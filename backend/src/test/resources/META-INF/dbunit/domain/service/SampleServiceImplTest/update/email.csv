@@ -1,0 +1,5 @@
+"USER_ID", "EMAIL_NO", "EMAIL", "VER"
+0, 0, "shiro.mynavi@debugroom.org", 1
+0, 1, "shiro.mynavi@test.org", 1
+1, 0, "hanako.mynavi@debugroom.org", 0
+2, 0, "jiro.mynavi@debugroom.org", 0
