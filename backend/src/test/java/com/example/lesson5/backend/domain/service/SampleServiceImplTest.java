@@ -43,6 +43,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -173,7 +174,7 @@ public class SampleServiceImplTest {
         public void findOneAbnormalTest() throws BusinessException {
             expectedException.expect(BusinessException.class);
             expectedException.expectMessage("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1");
-            User user = sampleService.findOne(
+            sampleService.findOne(
                     User.builder().userId(1L).build());
         }
 
@@ -248,9 +249,9 @@ public class SampleServiceImplTest {
             assertThat(result.getLoginId(), is("hanako.mynavi"));
             assertThat(result.getAddressByUserId().getZipCode(), is("111-1111"));
             assertThat(result.getAddressByUserId().getAddress(), is("Tonde Saitama"));
-            assertThat(result.getEmailsByUserId().stream()
+            assertThat(Objects.requireNonNull(result.getEmailsByUserId().stream()
                     .filter(email -> email.getEmailNo() == 0)
-                    .findFirst().get().getEmail(), is("hanako.mynavi@debugroom.org"));
+                    .findFirst().orElse(null)).getEmail(), is("hanako.mynavi@debugroom.org"));
         }
 
         @Test

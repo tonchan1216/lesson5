@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.either;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 @Slf4j
 @Category(UnitTest.class)
@@ -120,7 +120,8 @@ public class UserRepositoryTest {
     @Test
     public void testFindByLoginIdNormalCase(){
         Optional<User> optionalUser = userRepository.findByLoginId("taro.mynavi");
-        User user = optionalUser.get();
+        User user = optionalUser.orElse(null);
+        assert user != null;
         assertThat(user.getUserId(), equalTo(0L));
         assertThat(user.getFirstName(), equalTo("taro"));
     }

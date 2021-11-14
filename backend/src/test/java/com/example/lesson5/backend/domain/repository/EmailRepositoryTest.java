@@ -15,8 +15,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 
 @Slf4j
 @Category(UnitTest.class)
@@ -46,7 +47,7 @@ public class EmailRepositoryTest {
         testEntityManager.persist(
                 User.builder()
                         .userId(userId)
-                        .emailsByUserId(Arrays.asList(new Email[]{email1, email2}))
+                        .emailsByUserId(Arrays.asList(email1, email2))
                         .build());
     }
 
