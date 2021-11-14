@@ -17,11 +17,9 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.csv.CsvDataSet;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.experimental.runners.Enclosed;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +41,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.when;
 
 @RunWith(Enclosed.class)
@@ -63,9 +62,6 @@ public class SampleOneToManyServiceImplTest {
                 return new SampleOneToManyServiceImpl();
             }
         }
-
-        @Rule
-        public ExpectedException expectedException = ExpectedException.none();
 
         @MockBean
         UserRepository userRepositoryMock;
@@ -112,59 +108,66 @@ public class SampleOneToManyServiceImplTest {
         }
 
         @Test
-        public void getEmailsOfAbnormalTest() throws BusinessException{
+        public void getEmailsOfAbnormalTest() {
             User user = User.builder().userId(1).build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1");
-            sampleOneToManyService.getEmailsOf(user);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleOneToManyService.getEmailsOf(user)
+            );
+            assertThat(exception.getMessage(), is("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1"));
         }
 
         @Test
-        public void addAbnormalTest() throws BusinessException{
+        public void addAbnormalTest() {
             Email email = Email.builder().userId(1).build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1");
-            sampleOneToManyService.add(email);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleOneToManyService.add(email)
+            );
+            assertThat(exception.getMessage(), is("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1"));
         }
 
         @Test
-        public void updateAbnormalTest() throws BusinessException{
+        public void updateAbnormalTest() {
             Email email = Email.builder().userId(1).build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1");
-            sampleOneToManyService.update(email);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleOneToManyService.update(email)
+            );
+            assertThat(exception.getMessage(), is("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1"));
         }
 
         @Test
-        public void deleteAbnormalTest1() throws BusinessException{
+        public void deleteAbnormalTest1() {
             Email email = Email.builder().userId(1).build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたキーやメールアドレスは存在しません。 Key : 1, Email : null");
-            sampleOneToManyService.delete(email);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleOneToManyService.delete(email)
+            );
+            assertThat(exception.getMessage(), is("指定されたキーやメールアドレスは存在しません。 Key : 1, Email : null"));
         }
 
         @Test
-        public void deleteAbnormalTest2() throws BusinessException{
+        public void deleteAbnormalTest2() {
             Email email = Email.builder().userId(1).emailNo(4).build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたキーやメールアドレスは存在しません。 Key : 1, Email : null");
-            sampleOneToManyService.delete(email);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleOneToManyService.delete(email)
+            );
+            assertThat(exception.getMessage(), is("指定されたキーやメールアドレスは存在しません。 Key : 1, Email : null"));
         }
 
         @Test
-        public void deleteAbnormalTest3() throws BusinessException{
+        public void deleteAbnormalTest3() {
             Email email = Email.builder().userId(1).email("shiro.mynavi@debugroom.org").build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定したメールアドレスは存在しません. Email : shiro.mynavi@debugroom.org");
-            sampleOneToManyService.delete(email);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleOneToManyService.delete(email)
+            );
+            assertThat(exception.getMessage(), is("指定したメールアドレスは存在しません. Email : shiro.mynavi@debugroom.org"));
         }
 
         @Test
-        public void deleteAllEmailAbnormalTest() throws BusinessException{
+        public void deleteAllEmailAbnormalTest() {
             User user = User.builder().userId(1).build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1");
-            sampleOneToManyService.deleteAllEmail(user);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleOneToManyService.deleteAllEmail(user)
+            );
+            assertThat(exception.getMessage(), is("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1"));
         }
 
     }

@@ -42,6 +42,7 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.either;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.when;
 
 @RunWith(Enclosed.class)
@@ -68,9 +69,6 @@ public class SampleOneToOneServiceImplTest {
 
         @Autowired
         SampleOneToOneService sampleOneToOneService;
-
-        @Rule
-        public ExpectedException expectedException = ExpectedException.none();
 
         @Before
         public void setUp(){
@@ -102,11 +100,12 @@ public class SampleOneToOneServiceImplTest {
         }
 
         @Test
-        public void findAddressOfAbnormalTest() throws BusinessException{
+        public void findAddressOfAbnormalTest() {
             User user = User.builder().userId(1).build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1");
-            sampleOneToOneService.findAddressOf(user);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleOneToOneService.findAddressOf(user)
+            );
+            assertThat(exception.getMessage(), is("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1"));
         }
 
         @Test
@@ -122,15 +121,16 @@ public class SampleOneToOneServiceImplTest {
         }
 
         @Test
-        public void updateAbnormalTest() throws  BusinessException{
+        public void updateAbnormalTest() {
             Address updateAddress = Address.builder()
                     .userId(1)
                     .zipCode("300-0000")
                     .address("Tonde Saitama")
                     .build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1");
-            sampleOneToOneService.update(updateAddress);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleOneToOneService.update(updateAddress)
+            );
+            assertThat(exception.getMessage(), is("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1"));
         }
 
     }

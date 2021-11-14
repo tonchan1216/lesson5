@@ -17,11 +17,9 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.csv.CsvDataSet;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.experimental.runners.Enclosed;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +41,7 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.either;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.when;
 
 
@@ -64,9 +63,6 @@ public class SampleManyToManyServiceImplTest {
                 return new SampleManyToManyServiceImpl();
             }
         }
-
-        @Rule
-        public ExpectedException expectedException = ExpectedException.none();
 
         @MockBean
         UserRepository userRepositoryMock;
@@ -98,55 +94,62 @@ public class SampleManyToManyServiceImplTest {
         }
 
         @Test
-        public void addUserToGroupAbnormalTest1() throws BusinessException{
+        public void addUserToGroupAbnormalTest1() {
             Group group = Group.builder().groupId(0).build();
             User user = User.builder().userId(1).build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1");
-            sampleManyToManyService.addUserTo(group, user);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleManyToManyService.addUserTo(group, user)
+            );
+            assertThat(exception.getMessage(), is("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1"));
         }
 
         @Test
-        public void addUserToGroupAbnormalTest2() throws BusinessException{
+        public void addUserToGroupAbnormalTest2() {
             Group group = Group.builder().groupId(0).build();
             User user = User.builder().userId(0).build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("ユーザは既にグループに追加されています。UserID ：0, GroupID : 0");
-            sampleManyToManyService.addUserTo(group, user);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleManyToManyService.addUserTo(group, user)
+            );
+            assertThat(exception.getMessage(), is("ユーザは既にグループに追加されています。UserID ：0, GroupID : 0"));
         }
 
         @Test
-        public void deleteUserFromGroupAbnormalTest1() throws BusinessException{
+        public void deleteUserFromGroupAbnormalTest1() {
             Group group = Group.builder().groupId(0).build();
             User user = User.builder().userId(1).build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1");
-            sampleManyToManyService.deleteUserFrom(group, user);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleManyToManyService.deleteUserFrom(group, user)
+            );
+            assertThat(exception.getMessage(), is("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1"));
         }
 
         @Test
-        public void deleteUserFromGroupAbnormalTest2() throws BusinessException{
+        public void deleteUserFromGroupAbnormalTest2() {
             Group group = Group.builder().groupId(2).build();
             User user = User.builder().userId(0).build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("ユーザは指定されたグループに所属していません。UserID : 0, GroupID : 2");
-            sampleManyToManyService.deleteUserFrom(group, user);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleManyToManyService.deleteUserFrom(group, user)
+            );
+            assertThat(exception.getMessage(), is("ユーザは指定されたグループに所属していません。UserID : 0, GroupID : 2"));
+
         }
 
         @Test
-        public void deleteGroupAbnormalTest() throws BusinessException{
+        public void deleteGroupAbnormalTest() {
             Group group = Group.builder().groupId(3).build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたグループは存在しないか、IDが誤っています。 GroupID : 3");
-            sampleManyToManyService.delete(group);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleManyToManyService.delete(group)
+            );
+            assertThat(exception.getMessage(), is("指定されたグループは存在しないか、IDが誤っています。 GroupID : 3"));
         }
 
         @Test
-        public void deleteUserAbnormalTest() throws BusinessException{
+        public void deleteUserAbnormalTest() {
             User user = User.builder().userId(1).build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1");
-            sampleManyToManyService.delete(user);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleManyToManyService.delete(user)
+            );
+            assertThat(exception.getMessage(), is("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1"));
         }
 
     }

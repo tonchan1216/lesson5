@@ -21,11 +21,9 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.csv.CsvDataSet;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.experimental.runners.Enclosed;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +47,7 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.when;
 
 
@@ -81,9 +80,6 @@ public class SampleServiceImplTest {
 
         @Autowired
         SampleService sampleService;
-
-        @Rule
-        public ExpectedException expectedException = ExpectedException.none();
 
         @Before
         public void setUp(){
@@ -171,11 +167,12 @@ public class SampleServiceImplTest {
         }
 
         @Test
-        public void findOneAbnormalTest() throws BusinessException {
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1");
-            sampleService.findOne(
-                    User.builder().userId(1L).build());
+        public void findOneAbnormalTest() {
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleService.findOne(
+                            User.builder().userId(1L).build())
+            );
+            assertThat(exception.getMessage(), is("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1"));
         }
 
         @Test
@@ -209,14 +206,15 @@ public class SampleServiceImplTest {
         }
 
         @Test
-        public void addTestAbnormalCase() throws BusinessException{
+        public void addTestAbnormalCase() {
             User addUser = User.builder()
                     .loginId("taro.mynavi")
                     .build();
 
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("使用できないログインIDです。 LoginID : taro.mynavi");
-            sampleService.add(addUser);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleService.add(addUser)
+            );
+            assertThat(exception.getMessage(), is("使用できないログインIDです。 LoginID : taro.mynavi"));
         }
 
         @Test
@@ -255,18 +253,19 @@ public class SampleServiceImplTest {
         }
 
         @Test
-        public void updateTestAbnormalCase1() throws BusinessException{
+        public void updateTestAbnormalCase1() {
             User updateUser = User.builder()
                     .userId(1L)
                     .build();
 
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1");
-            sampleService.update(updateUser);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleService.update(updateUser)
+            );
+            assertThat(exception.getMessage(), is("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1"));
         }
 
         @Test
-        public void updateTestAbnormalCase2() throws BusinessException{
+        public void updateTestAbnormalCase2() {
 
             User updateUser = User.builder()
                     .userId(0L)
@@ -276,26 +275,30 @@ public class SampleServiceImplTest {
                     .ver(0)
                     .build();
 
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("使用できないログインIDです。 LoginID : taro.mynavi");
-            sampleService.update(updateUser);
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleService.update(updateUser)
+            );
+            assertThat(exception.getMessage(), is("使用できないログインIDです。 LoginID : taro.mynavi"));
         }
 
         @Test
-        public void deleteTestAbnormalCase() throws BusinessException{
+        public void deleteTestAbnormalCase() {
             User deleteUser = User.builder()
                     .userId(1L)
                     .build();
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1");
-            sampleService.delete(deleteUser);
+
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleService.delete(deleteUser)
+            );
+            assertThat(exception.getMessage(), is("指定されたユーザは存在しないか、IDが誤っています。 UserID : 1"));
         }
 
         @Test
-        public void findUserHaveLoginIdAbnormalTest() throws BusinessException{
-            expectedException.expect(BusinessException.class);
-            expectedException.expectMessage("指定されたユーザは存在しません。 LoginID : saburo.mynavi");
-            sampleService.findUserHave("saburo.mynavi");
+        public void findUserHaveLoginIdAbnormalTest() {
+            Throwable exception = assertThrows(
+                    BusinessException.class, () -> sampleService.findUserHave("saburo.mynavi")
+            );
+            assertThat(exception.getMessage(), is("指定されたユーザは存在しません。 LoginID : saburo.mynavi"));
         }
 
     }
@@ -321,8 +324,6 @@ public class SampleServiceImplTest {
                 return new CsvDataSet(resource.getFile());
             }
         }
-        @Rule
-        public ExpectedException expectedException = ExpectedException.none();
 
         @Autowired
         SampleService sampleService;
