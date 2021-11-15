@@ -2,16 +2,15 @@ package com.example.lesson5.backend.domain.repository;
 
 import com.example.lesson5.backend.domain.model.entity.Email;
 import com.example.lesson5.backend.domain.model.entity.User;
-import com.example.lesson5.common.apinfra.test.junit.UnitTest;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Arrays;
 
@@ -20,8 +19,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 @Slf4j
-@Category(UnitTest.class)
-@RunWith(SpringRunner.class)
+@Tag("UnitTest")
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class EmailRepositoryTest {
 
@@ -31,7 +30,7 @@ public class EmailRepositoryTest {
     @Autowired
     EmailRepository emailRepository;
 
-    @Before
+    @BeforeEach
     public void before(){
         long userId = 0;
         Email email1 = Email.builder()

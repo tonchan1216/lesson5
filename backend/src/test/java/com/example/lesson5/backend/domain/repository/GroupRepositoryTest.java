@@ -4,17 +4,16 @@ import com.example.lesson5.backend.domain.model.entity.Group;
 import com.example.lesson5.backend.domain.model.entity.Membership;
 import com.example.lesson5.backend.domain.model.entity.User;
 import com.example.lesson5.backend.domain.repository.specification.FindGroupsByUserId;
-import com.example.lesson5.common.apinfra.test.junit.UnitTest;
 import com.example.lesson5.common.apinfra.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,8 +24,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 @Slf4j
-@Category(UnitTest.class)
-@RunWith(SpringRunner.class)
+@Tag("UnitTest")
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class GroupRepositoryTest {
     @Autowired
@@ -35,7 +34,7 @@ public class GroupRepositoryTest {
     @Autowired
     GroupRepository groupRepository;
 
-    @Before
+    @BeforeEach
     public void before(){
         long userIdA = 0;
         long userIdB = 1;

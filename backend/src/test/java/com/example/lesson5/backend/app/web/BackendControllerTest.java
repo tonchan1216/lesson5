@@ -14,13 +14,8 @@ import com.example.lesson5.common.web.model.EmailResource;
 import com.example.lesson5.common.web.model.GroupResource;
 import com.example.lesson5.common.web.model.UserResource;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,7 +25,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -43,17 +38,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
-@RunWith(Enclosed.class)
 public class BackendControllerTest {
-    @RunWith(SpringRunner.class)
-    @Category(com.example.lesson5.common.apinfra.test.junit.UnitTest.class)
+    @Nested
+    @ExtendWith(SpringExtension.class)
+    @Tag("UnitTest")
     @WebMvcTest(controllers = com.example.lesson5.backend.app.web.BackendController.class)
-    public static class UnitTest{
+    public class UnitTest{
 
         @Autowired
         ObjectMapper objectMapper;
@@ -73,7 +68,7 @@ public class BackendControllerTest {
         @MockBean
         SampleManyToManyService sampleManyToManyServiceService;
 
-        @Before
+        @BeforeEach
         public void setUp() throws Exception{
             Address mockAddress1 = Address.builder()
                     .userId(0)
@@ -308,7 +303,7 @@ public class BackendControllerTest {
                                 assertThat(validationError.getDefaultMessage(), is("must be a well-formed email address"));
                                 break;
                             case "emailList[1].email" :
-                                assertThat(validationError.getDefaultMessage(), is("must be a well-formed email address"));
+                                    assertThat(validationError.getDefaultMessage(), is("must be a well-formed email address"));
                                 break;
                             case "address.zipCode" :
                                 assertThat(validationError.getDefaultMessage(), is("must match \"[0-9\\-]*\""));
@@ -539,12 +534,13 @@ public class BackendControllerTest {
 
     }
 
-    @RunWith(SpringRunner.class)
+    @Nested
+    @ExtendWith(SpringExtension.class)
     @SpringBootTest(classes = TestConfig.ControllerTestConfig.class,
             webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+    @TestMethodOrder(MethodOrderer.MethodName.class)
     @ActiveProfiles("dev")
-    public static class IntegrationTest{
+    public class IntegrationTest{
 
         private static final String testServer = "localhost";
         @Autowired
@@ -555,7 +551,7 @@ public class BackendControllerTest {
 
         private String testServerURL;
 
-        @Before
+        @BeforeEach
         public void setUp(){
             testServerURL = "http://" + testServer + ":" + port;
         }

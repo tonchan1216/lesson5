@@ -14,15 +14,8 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 import com.github.springtestdbunit.dataset.AbstractDataSetLoader;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.csv.CsvDataSet;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
@@ -42,18 +35,18 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.either;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-@RunWith(Enclosed.class)
 public class SampleOneToOneServiceImplTest {
 
-    @RunWith(SpringRunner.class)
+    @Nested
+    @ExtendWith(SpringExtension.class)
     @SpringBootTest(classes = {
             TestConfig.UnitTestConfig.class,
             SampleOneToOneServiceImplTest.UnitTest.Config.class,
     }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-    @Category(com.example.lesson5.common.apinfra.test.junit.UnitTest.class)
+    @Tag("UnitTest")
     public static class UnitTest{
 
         @Configuration
@@ -70,7 +63,7 @@ public class SampleOneToOneServiceImplTest {
         @Autowired
         SampleOneToOneService sampleOneToOneService;
 
-        @Before
+        @BeforeEach
         public void setUp(){
             long userId = 0;
             Address mockUpdatedAddress = Address.builder()
@@ -135,7 +128,8 @@ public class SampleOneToOneServiceImplTest {
 
     }
 
-    @RunWith(SpringRunner.class)
+    @Nested
+    @ExtendWith(SpringExtension.class)
     @SpringBootTest(classes = {
             TestConfig.ServiceTestConfig.class,
     }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -145,8 +139,8 @@ public class SampleOneToOneServiceImplTest {
             DbUnitTestExecutionListener.class })
     @DbUnitConfiguration(dataSetLoader = IntegrationTest.CsvDataSetLoader.class)
     @ActiveProfiles("dev")
-    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-    @Category(com.example.lesson5.common.apinfra.test.junit.IntegrationTest.class)
+    @TestMethodOrder(MethodOrderer.MethodName.class)
+    @Tag("IntegrationTest")
     public static class IntegrationTest{
 
         public static class CsvDataSetLoader extends AbstractDataSetLoader {
