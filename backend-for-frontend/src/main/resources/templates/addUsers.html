@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <title>Hello! Thymeleaf</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/css/flex.css" media="(min-width: 1280px)">
+    <link rel="stylesheet" href="static/css/flex_mobile.css" media="(min-width: 320px) and (max-width: 767px)">
+    <link rel="stylesheet" href="static/css/flex_tablet.css" media="(min-width: 768px) and (max-width: 1279px)">
+    <link rel="stylesheet" href="static/css/add_users.css" media="(min-width: 1280px)">
+    <link rel="stylesheet" href="static/css/add_users_mobile.css" media="(min-width: 320px) and (max-width: 767px)">
+    <link rel="stylesheet" href="static/css/add_users_tablet.css" media="(min-width: 768px) and (max-width: 1279px)">
+    <script type="text/javascript" src="webjars/jquery/jquery.js"></script>
+</head>
+<body>
+<h1>Hello! Continuous integration sample!</h1>
+
+<h2>Add user result as below.</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th rowspan="4">No</th>
+        <th>名前</th>
+        <th>苗字</th>
+    </tr>
+    <tr>
+        <th>ログインID</th>
+        <th></th>
+    </tr>
+    <tr>
+        <th>郵便番号</th>
+        <th>住所</th>
+    </tr>
+    <tr>
+        <th>Email1</th>
+        <th>Email2</th>
+    </tr>
+    </thead>
+    <tbody th:each="user, status: ${users}">
+    <tr>
+        <td th:rowspan="${user.emailList.size()+3}" th:text="${status.count}"></td>
+        <td th:text="${user.firstName}"></td>
+        <td th:text="${user.familyName}"></td>
+    </tr>
+    <tr>
+        <td th:text="${user.loginId}"></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td th:text="${user.address.zipCode}"></td>
+        <td th:text="${user.address.address}"></td>
+    </tr>
+    <tr th:each="email, status1: ${user.emailList}">
+        <td colspan="2" th:text="${email.email}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+
+</html>

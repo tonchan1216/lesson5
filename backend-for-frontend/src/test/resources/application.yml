@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    active: dev
+selenium:
+  evidencePath: ./test-evidence
+  chromeDriverPath: ${CHROME_DRIVER_PATH:/usr/local/bin/chromedriver}

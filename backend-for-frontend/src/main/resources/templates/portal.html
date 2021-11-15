@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Index</title>
+    <link rel="stylesheet" href="static/css/flex.css" media="(min-width: 1280px)">
+    <link rel="stylesheet" href="static/css/flex_mobile.css" media="(min-width: 320px) and (max-width: 767px)">
+    <link rel="stylesheet" href="static/css/flex_tablet.css" media="(min-width: 768px) and (max-width: 1279px)">
+    <link rel="stylesheet" href="static/css/portal.css" media="(min-width: 1280px)">
+    <link rel="stylesheet" href="static/css/portal_mobile.css" media="(min-width: 320px) and (max-width: 767px)">
+    <link rel="stylesheet" href="static/css/portal_tablet.css" media="(min-width: 768px) and (max-width: 1279px)">
+    <script type="text/javascript" src="webjars/jquery/jquery.js"></script>
+    <script type="text/javascript" src="static/js/portal.js"></script>
+
+</head>
+<body>
+<h1>Hello! Continuous integration sample!</h1>
+
+<h2>Please call backend get users service.</h2>
+
+<form id="getForm" action="getUsers" method="get" >
+  <button id="getUsersButton" name="getUsersButton" class="main-button" type="submit" value="Submit" >Get user</button>
+</form>
+
+<h2>Please call backend add users service.</h2>
+
+<form id="form" action="addUsers" method="post">
+
+    <table id="user-table">
+      <tbody>
+        <div th:each="user, status : *{addUsersForm.users}">
+        <tr th:id="|addForm-${status.index}_user_1|">
+          <td rowspan="4"><input th:id="|user-${status.index}|" th:text="${status.count}" type="hidden"></td>
+          <td>
+            <label th:for="|firstName-${status.index}|">名前</label>
+            <input th:id="|firstName-${status.index}|" type="text" th:field="*{addUsersForm.users[__${status.index}__].firstName}" placeholder="太郎"/><br>
+            <span th:errors="*{addUsersForm.users[__${status.index}__].firstName}" th:class="errorMessages" ></span>
+          </td>
+          <td>
+            <label th:for="|familyName-${status.index}|">苗字</label>
+            <input th:id="|familyName-${status.index}|" type="text" th:field="*{addUsersForm.users[__${status.index}__].familyName}" placeholder="マイナビ"/><br>
+            <span th:errors="*{addUsersForm.users[__${status.index}__].familyName}" th:class="errorMessages"></span>
+          </td>
+          <td rowspan="4">
+              <button th:id="|addFormButton-${status.index}|" type="button" onclick="addForm()">Add form</button>
+              <button th:id="|deleteFormButton-${status.index}|" th:if="${1 < status.count}" type="button" th:attr="onclick='deleteForm(__${status.index}__)'">Delete</button>
+          </td>
+        </tr>
+        <tr th:id="|addForm-${status.index}_user_2|">
+          <td>
+            <label th:for="|loginId-${status.index}|">ログインID</label>
+            <input th:id="|loginId-${status.index}|" type="text" th:field="*{addUsersForm.users[__${status.index}__].loginId}" placeholder="taro.mynavi"/><br>
+            <span th:errors="*{addUsersForm.users[__${status.index}__].loginId}" th:class="errorMessages"></span>
+              <span th:text="*{errorMessage != null && errorLoginId == addUsersForm.users[__${status.index}__].loginId } ? ${errorMessage} : ''"></span>
+          </td>
+          <td>
+            <button th:id="|isUsableLoginIdButton-${status.index}|" type="button" th:attr="onclick='isUsableLoginId(__${status.index}__)'" th:value="${#request.contextPath}">Usable ID?</button>
+          </td>
+        </tr>
+        <tr th:id="|addForm-${status.index}_address_1|">
+          <td>
+            <label th:for="|zipCode-${status.index}|">郵便番号</label>
+            <input th:id="|zipCode-${status.index}|" type="text"  th:field="*{addUsersForm.users[__${status.index}__].address.zipCode}" placeholder="100-0000"/><br>
+            <span th:errors="*{addUsersForm.users[__${status.index}__].address.zipCode}"  th:class="errorMessages"></span>
+          </td>
+          <td>
+            <label th:for="|address-${status.index}|">住所</label>
+            <input th:id="|address-${status.index}|" type="text" th:field="*{addUsersForm.users[__${status.index}__].address.address}" placeholder="東京都 千代田区"/><br>
+            <span th:errors="*{addUsersForm.users[__${status.index}__].address.address}"  th:class="errorMessages"></span>
+          </td>
+        </tr>
+        <tr th:id="|addForm-${status.index}_email_${status1.index}|" th:each="email, status1: ${user.emailList}">
+          <td>
+            <label th:for="|email-${status.index}_${status1.index}|" th:text="|Email-${status1.count}|"></label>
+            <input th:id="|email-${status.index}_${status1.index}|" type="email" th:field="*{addUsersForm.users[__${status.index}__].emailList[__${status1.index}__].email}" placeholder="taro.mynavi1@debugroom.org"/><br>
+            <span th:errors="*{addUsersForm.users[__${status.index}__].emailList[__${status1.index}__].email}"  th:class="errorMessages"></span>
+          </td>
+        </tr>
+        </div>
+      </tbody>
+    </table>
+    <button id="addUsersButton" name="addUsersButton" class="main-button" type="submit" value="Submit" >Add user</button>
+</form>
+
+</body>
+</html>
