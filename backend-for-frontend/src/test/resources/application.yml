@@ -3,4 +3,4 @@ spring:
     active: dev
 selenium:
   evidencePath: ./test-evidence
-  chromeDriverPath: ${CHROME_DRIVER_PATH:/usr/local/bin/chromedriver}
+  chromeDriverPath: ${CHROME_DRIVER_PATH:C:\Users\clear\IdeaProjects\chromedriver.exe}

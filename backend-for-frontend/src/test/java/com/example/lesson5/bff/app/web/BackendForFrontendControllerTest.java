@@ -69,7 +69,7 @@ public class BackendForFrontendControllerTest {
     @WebMvcTest(controllers = BackendForFrontendController.class)
     @ContextConfiguration(classes = {TestConfig.ControllerTestConfig.class})
     @Tag("UnitTest")
-    public static class UnitTest{
+    public class UnitTest{
 
         @Value("#{servletContext.contextPath}")
         private String contextPath;
@@ -296,51 +296,52 @@ public class BackendForFrontendControllerTest {
 
     }
 
+    @Configuration
+    public static class Config{
+
+        @Autowired
+        SeleniumProperties seleniumProperties;
+
+        @Bean
+        @Profile("dev")
+        WebDriver webDriver(){
+            System.setProperty("webdriver.chrome.driver", seleniumProperties.getChromeDriverPath());
+            /*
+             * This option is setting for as follow error in Ubuntu CodeBuild environment.
+             *
+             * Caused by: org.springframework.beans.factory.BeanCreationException:
+             * Error creating bean with name 'webDriver' defined in
+             * com.example.lesson5.bff.app.web.BackendForFrontendControllerTest$EndToEndTest$Config:
+             * Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException:
+             * Failed to instantiate [org.openqa.selenium.WebDriver]: Factory method 'webDriver' threw exception;
+             * nested exception is org.openqa.selenium.WebDriverException:
+             * unknown error: Chrome failed to start: exited abnormally
+             * See : https://stackoverflow.com/questions/50642308/webdriverexception-unknown-error-devtoolsactiveport-file-doesnt-exist-while-t
+             */
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--headless");
+            options.addArguments("--disable-dev-shm-usage"); // overcome limited resource problems
+            options.addArguments("start-maximized"); // open Browser in maximized mode
+            options.addArguments("disable-infobars"); // disabling infobars
+            options.addArguments("--disable-extensions"); // disabling extensions
+            options.addArguments("--disable-gpu"); // applicable to windows os only
+            options.addArguments("--no-sandbox"); // Bypass OS security model
+            return new ChromeDriver(options);
+        }
+
+
+    }
+
+
     @Nested
     @ExtendWith(SpringExtension.class)
     @SpringBootTest(classes = {
             TestConfig.EndToEndTestConfig.class,
-            BackendForFrontendControllerTest.EndToEndTest.Config.class
+            BackendForFrontendControllerTest.Config.class
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
     @TestMethodOrder(MethodOrderer.MethodName.class)
     @Tag("E2ETest")
-    public static class EndToEndTest{
-
-        @Configuration
-        public static class Config{
-
-            @Autowired
-            SeleniumProperties seleniumProperties;
-
-            @Bean
-            @Profile("dev")
-            WebDriver webDriver(){
-                System.setProperty("webdriver.chrome.driver", seleniumProperties.getChromeDriverPath());
-                /*
-                 * This option is setting for as follow error in Ubuntu CodeBuild environment.
-                 *
-                 * Caused by: org.springframework.beans.factory.BeanCreationException:
-                 * Error creating bean with name 'webDriver' defined in
-                 * com.example.lesson5.bff.app.web.BackendForFrontendControllerTest$EndToEndTest$Config:
-                 * Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException:
-                 * Failed to instantiate [org.openqa.selenium.WebDriver]: Factory method 'webDriver' threw exception;
-                 * nested exception is org.openqa.selenium.WebDriverException:
-                 * unknown error: Chrome failed to start: exited abnormally
-                 * See : https://stackoverflow.com/questions/50642308/webdriverexception-unknown-error-devtoolsactiveport-file-doesnt-exist-while-t
-                 */
-                ChromeOptions options = new ChromeOptions();
-                options.addArguments("--headless");
-                options.addArguments("--disable-dev-shm-usage"); // overcome limited resource problems
-                options.addArguments("start-maximized"); // open Browser in maximized mode
-                options.addArguments("disable-infobars"); // disabling infobars
-                options.addArguments("--disable-extensions"); // disabling extensions
-                options.addArguments("--disable-gpu"); // applicable to windows os only
-                options.addArguments("--no-sandbox"); // Bypass OS security model
-                return new ChromeDriver(options);
-            }
-
-
-        }
+    public class EndToEndTest{
 
         @Value("#{servletContext.contextPath}")
         private String contextPath;

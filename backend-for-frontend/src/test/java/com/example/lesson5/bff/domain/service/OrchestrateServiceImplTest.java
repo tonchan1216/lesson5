@@ -9,6 +9,7 @@ import com.example.lesson5.common.web.model.UserResource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,27 +26,28 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 public class OrchestrateServiceImplTest {
+    @Configuration
+    public static class Config{
+
+        @Bean
+        ObjectMapper testObjectMapper(){
+            return new ObjectMapper();
+        }
+
+        @Bean
+        OrchestrateService orchestrateService(){
+            return new OrchestrateServiceImpl();
+        }
+    }
+
 
     @Nested
     @ExtendWith(SpringExtension.class)
     @SpringBootTest(classes = {
-            OrchestrateServiceImplTest.UnitTest.Config.class
+            OrchestrateServiceImplTest.Config.class
     }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-    public static class UnitTest{
-
-        @Configuration
-        public static class Config{
-
-            @Bean
-            ObjectMapper testObjectMapper(){
-                return new ObjectMapper();
-            }
-
-            @Bean
-            OrchestrateService orchestrateService(){
-                return new OrchestrateServiceImpl();
-            }
-        }
+    @Tag("UnitTest")
+    public class UnitTest{
 
         @Autowired
         ObjectMapper objectMapper;
@@ -228,7 +230,7 @@ public class OrchestrateServiceImplTest {
                     .build();
 
             assertThrows(
-                    BusinessException.class, () -> orchestrateService.addUsers(Arrays.asList(
+                    SystemException.class, () -> orchestrateService.addUsers(Arrays.asList(
                             user1, user2))
             );
         }

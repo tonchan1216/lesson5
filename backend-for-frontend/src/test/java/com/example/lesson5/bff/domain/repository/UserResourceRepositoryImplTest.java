@@ -7,6 +7,7 @@ import com.example.lesson5.common.web.model.EmailResource;
 import com.example.lesson5.common.web.model.UserResource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,28 +35,28 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UserResourceRepositoryImplTest {
 
+    @Configuration
+    public static class Config{
+
+        @Bean
+        RestTemplate restTemplate(){
+            return new RestTemplate();
+        }
+
+        @Bean
+        public UserResourceRepository userResourceRepository(){
+            return new UserResourceRepositoryImpl();
+        }
+
+    }
+
     @Nested
     @ExtendWith(SpringExtension.class)
     @RestClientTest
-    @ContextConfiguration(classes = {UnitTest.Config.class,
+    @ContextConfiguration(classes = {Config.class,
             TestConfig.UnitTestConfig.class})
-    public static class UnitTest{
-
-        @Configuration
-        public static class Config{
-
-            @Bean
-            RestTemplate restTemplate(){
-                return new RestTemplate();
-            }
-
-            @Bean
-            public UserResourceRepository userResourceRepository(){
-                return new UserResourceRepositoryImpl();
-            }
-
-        }
-
+    @Tag("UnitTest")
+    public class UnitTest{
         @Autowired
         RestTemplate restTemplate;
 
@@ -120,7 +121,7 @@ public class UserResourceRepositoryImplTest {
                             jsonResponseBody1));
 
             assertThrows(
-                    BusinessException.class, () -> userResourceRepository.findOne(userId)
+                    SystemException.class, () -> userResourceRepository.findOne(userId)
             );
         }
 
@@ -197,7 +198,7 @@ public class UserResourceRepositoryImplTest {
                             jsonResponseBody1));
 
             assertThrows(
-                    BusinessException.class, () -> userResourceRepository.findOne(userId)
+                    SystemException.class, () -> userResourceRepository.findOne(userId)
             );
         }
 
@@ -454,7 +455,7 @@ public class UserResourceRepositoryImplTest {
                             jsonResponseBody1));
 
             assertThrows(
-                    BusinessException.class, () -> userResourceRepository.save(user1)
+                    SystemException.class, () -> userResourceRepository.save(user1)
             );
         }
 
@@ -610,7 +611,7 @@ public class UserResourceRepositoryImplTest {
                             jsonResponseBody1));
 
             assertThrows(
-                    BusinessException.class, () -> userResourceRepository.delete(userId)
+                    SystemException.class, () -> userResourceRepository.delete(userId)
             );
         }
 
@@ -687,7 +688,7 @@ public class UserResourceRepositoryImplTest {
                             jsonResponseBody1));
 
             assertThrows(
-                    BusinessException.class, () -> userResourceRepository.delete(userId)
+                    SystemException.class, () -> userResourceRepository.delete(userId)
             );
         }
 
@@ -747,7 +748,7 @@ public class UserResourceRepositoryImplTest {
                             jsonResponseBody1));
 
             assertThrows(
-                    BusinessException.class, () -> userResourceRepository.findByLoginId(loginId)
+                    SystemException.class, () -> userResourceRepository.findByLoginId(loginId)
             );
         }
 
@@ -803,7 +804,7 @@ public class UserResourceRepositoryImplTest {
                             jsonResponseBody1));
 
             assertThrows(
-                    BusinessException.class, () -> userResourceRepository.findByLoginId(loginId)
+                    SystemException.class, () -> userResourceRepository.findByLoginId(loginId)
             );
         }
     }
