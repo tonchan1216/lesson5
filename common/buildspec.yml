@@ -1,15 +1,18 @@
 version: 0.2
 env:
+  variables:
+    SONAR_HOST_URL: "https://sonarcloud.io"
+    SONAR_ORGANIZATION: "tonchan1216"
+    SONAR_PROJECT_KEY: "lesson5_common"
   parameter-store:
-    SONAR_HOST_URL: "SONAR_HOST_URL"
-    SONAR_LOGIN: "SONAR_LOGIN_COMMON"
+    SONAR_LOGIN: "ma-furutanito-sonar-password"
 phases:
   install:
     runtime-versions:
-      docker: 18
+      java: corretto11
   build:
     commands:
-      - mvn -f common/pom.xml package sonar:sonar -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_LOGIN}
+      - mvn -f common/pom.xml package sonar:sonar -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_LOGIN} -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.organization=${SONAR_ORGANIZATION}
 artifacts:
   files:
-    - common/target/mynavi-sample-continuous-integration-common-0.0.1-SNAPSHOT.jar
+    - common/target/lesson5-common-0.0.1-SNAPSHOT.jar
