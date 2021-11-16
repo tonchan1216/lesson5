@@ -1,11 +1,11 @@
 package com.example.lesson5.bff.app.web;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
+import com.example.lesson5.bff.app.model.*;
+import com.example.lesson5.bff.domain.service.OrchestrateService;
+import com.example.lesson5.bff.domain.service.SampleService;
+import com.example.lesson5.common.apinfra.exception.BusinessException;
+import com.example.lesson5.common.apinfra.exception.ValidationError;
+import com.example.lesson5.common.apinfra.exception.ValidationErrorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.lesson5.bff.app.model.AddUsersForm;
-import com.example.lesson5.bff.app.model.Address;
-import com.example.lesson5.bff.app.model.Email;
-import com.example.lesson5.bff.app.model.User;
-import com.example.lesson5.bff.app.model.UserMapper;
-import com.example.lesson5.bff.domain.service.OrchestrateService;
-import com.example.lesson5.bff.domain.service.SampleService;
-import com.example.lesson5.common.apinfra.exception.BusinessException;
-import com.example.lesson5.common.apinfra.exception.ValidationError;
-import com.example.lesson5.common.apinfra.exception.ValidationErrorMapper;
+import java.util.*;
 
 @Controller
 public class BackendForFrontendController {
@@ -43,15 +34,14 @@ public class BackendForFrontendController {
 
     @ModelAttribute
     public AddUsersForm setUpForm(){
-        AddUsersForm addUsersForm = AddUsersForm.builder()
-                .users(new ArrayList<User>(
-                        Arrays.asList(
+        return AddUsersForm.builder()
+                .users(new ArrayList<>(
+                        List.of(
                                 User.builder()
                                         .address(new Address())
-                                        .emailList(new ArrayList<>(Arrays.asList(new Email())))
+                                        .emailList(new ArrayList<>(List.of(new Email())))
                                         .build())))
                 .build();
-        return addUsersForm;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/index.html")
@@ -100,7 +90,7 @@ public class BackendForFrontendController {
                 model.addAttribute("errorMessage", messageSource.getMessage(
                         e.getCode(), e.getArgs(), locale));
             }else if(Objects.equals(e.getCode(), "BE0001")){
-                List<ValidationError> validationErrors = (List<ValidationError>)e.getArgs()[0];
+                @SuppressWarnings("unchecked") List<ValidationError> validationErrors = (List<ValidationError>)e.getArgs()[0];
                 bindingResult.getAllErrors().addAll(
                         ValidationErrorMapper.mapToFieldError(validationErrors));
             }

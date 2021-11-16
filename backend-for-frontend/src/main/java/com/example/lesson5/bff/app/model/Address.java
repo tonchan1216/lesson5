@@ -19,10 +19,10 @@ public class Address implements Serializable {
     @Min(0)
     private long userId;
     @NotBlank
-    @Pattern(regexp = "[0-9¥-]*")
+    @Pattern(regexp = "[0-9¥\\-]*")
     private String zipCode;
     @NotBlank
-    @Pattern(regexp="^[^=#$%&./<>?¥ ¥^¥~¥[¥]¥(¥)¥¥]+$")
+    @Pattern(regexp="^[^=#$%&./<>? ^¥~\\[\\]()]+$")
     private String address;
 
 }

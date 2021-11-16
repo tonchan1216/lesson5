@@ -1,36 +1,33 @@
 package com.example.lesson5.bff.domain.service;
 
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-
+import com.example.lesson5.bff.domain.repository.UserResourceRepository;
+import com.example.lesson5.common.apinfra.exception.BusinessException;
+import com.example.lesson5.common.apinfra.exception.SystemException;
+import com.example.lesson5.common.web.model.AddressResource;
+import com.example.lesson5.common.web.model.EmailResource;
+import com.example.lesson5.common.web.model.UserResource;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.example.lesson5.common.web.model.AddressResource;
-import com.example.lesson5.common.web.model.EmailResource;
-import com.example.lesson5.common.apinfra.exception.BusinessException;
-import com.example.lesson5.common.apinfra.exception.SystemException;
-import com.example.lesson5.common.web.model.UserResource;
-import com.example.lesson5.bff.domain.repository.UserResourceRepository;
+import java.util.Arrays;
+import java.util.List;
 
-@RunWith(Enclosed.class)
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+
 public class OrchestrateServiceImplTest {
 
-    @RunWith(SpringRunner.class)
+    @Nested
+    @ExtendWith(SpringExtension.class)
     @SpringBootTest(classes = {
             OrchestrateServiceImplTest.UnitTest.Config.class
     }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -59,10 +56,7 @@ public class OrchestrateServiceImplTest {
         @Autowired
         OrchestrateService orchestrateService;
 
-        @Rule
-        public ExpectedException expectedException = ExpectedException.none();
-
-        @Before
+        @BeforeEach
         public void setUp() throws Exception{
 
             long userId1 = 0;
@@ -89,7 +83,7 @@ public class OrchestrateServiceImplTest {
                         .familyName("mynavi")
                         .loginId("taro.mynavi")
                         .address(mockAddress1)
-                        .emailList(Arrays.asList(new EmailResource[]{mockEmail1, mockEmail2}))
+                        .emailList(Arrays.asList(mockEmail1, mockEmail2))
                         .build();
             AddressResource mockAddress2 = AddressResource.builder()
                         .userId(userId2)
@@ -107,7 +101,7 @@ public class OrchestrateServiceImplTest {
                         .firstName("hanako")
                         .loginId("hanako.mynavi")
                         .address(mockAddress2)
-                        .emailList(Arrays.asList(new EmailResource[]{mockEmail3}))
+                        .emailList(List.of(mockEmail3))
                         .build();
             AddressResource mockAddress3 = AddressResource.builder()
                     .userId(userId3)
@@ -125,7 +119,7 @@ public class OrchestrateServiceImplTest {
                     .firstName("hanako")
                     .loginId("hanako.mynavi")
                     .address(mockAddress3)
-                    .emailList(Arrays.asList(new EmailResource[]{mockEmail4}))
+                    .emailList(List.of(mockEmail4))
                     .build();
             when(userResourceRepositoryMock.findOne(userId1)).thenReturn(mockUser1);
             when(userResourceRepositoryMock.findOne(userId2)).thenReturn(mockUser2);
@@ -138,7 +132,7 @@ public class OrchestrateServiceImplTest {
         }
 
         @Test
-        public void addUsersAbnormalTest1() throws Exception{
+        public void addUsersAbnormalTest1() {
 
             long userId1 = 0;
             long userId2 = 1;
@@ -163,7 +157,7 @@ public class OrchestrateServiceImplTest {
                     .familyName("mynavi")
                     .loginId("taro.mynavi")
                     .address(address1)
-                    .emailList(Arrays.asList(new EmailResource[]{email1, email2}))
+                    .emailList(Arrays.asList(email1, email2))
                     .build();
             AddressResource address2 = AddressResource.builder()
                     .userId(userId2)
@@ -181,20 +175,17 @@ public class OrchestrateServiceImplTest {
                     .firstName("hanako")
                     .loginId("hanako.mynavi")
                     .address(address2)
-                    .emailList(Arrays.asList(new EmailResource[]{email3}))
+                    .emailList(List.of(email3))
                     .build();
 
-            BusinessException businessException = new BusinessException();
-
-            expectedException.expect(BusinessException.class);
-
-            orchestrateService.addUsers(Arrays.asList(
-                    new UserResource[]{user1, user2}));
-
+            assertThrows(
+                    BusinessException.class, () -> orchestrateService.addUsers(Arrays.asList(
+                            user1, user2))
+            );
         }
 
         @Test
-        public void addUsersAbnormalTest2() throws Exception{
+        public void addUsersAbnormalTest2() {
 
 
             long userId3 = 2;
@@ -215,7 +206,7 @@ public class OrchestrateServiceImplTest {
                     .familyName("mynavi")
                     .loginId("hanako.mynavi")
                     .address(address1)
-                    .emailList(Arrays.asList(new EmailResource[]{email1}))
+                    .emailList(List.of(email1))
                     .build();
             AddressResource address2 = AddressResource.builder()
                     .userId(userId2)
@@ -233,16 +224,13 @@ public class OrchestrateServiceImplTest {
                     .firstName("hanako")
                     .loginId("hanako.mynavi")
                     .address(address2)
-                    .emailList(Arrays.asList(new EmailResource[]{email3}))
+                    .emailList(List.of(email3))
                     .build();
 
-            BusinessException businessException = new BusinessException();
-
-            expectedException.expect(SystemException.class);
-
-            orchestrateService.addUsers(Arrays.asList(
-                    new UserResource[]{user1, user2}));
-
+            assertThrows(
+                    BusinessException.class, () -> orchestrateService.addUsers(Arrays.asList(
+                            user1, user2))
+            );
         }
 
 

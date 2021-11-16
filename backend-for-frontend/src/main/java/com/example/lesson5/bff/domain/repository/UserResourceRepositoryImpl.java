@@ -1,12 +1,8 @@
 package com.example.lesson5.bff.domain.repository;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
+import com.example.lesson5.common.apinfra.exception.*;
+import com.example.lesson5.common.web.model.UserResource;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpMethod;
@@ -16,13 +12,11 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.example.lesson5.common.apinfra.exception.BusinessException;
-import com.example.lesson5.common.apinfra.exception.BusinessExceptionResponse;
-import com.example.lesson5.common.apinfra.exception.ErrorResponse;
-import com.example.lesson5.common.apinfra.exception.SystemException;
-import com.example.lesson5.common.apinfra.exception.ValidationError;
-import com.example.lesson5.common.apinfra.exception.ValidationErrorResponse;
-import com.example.lesson5.common.web.model.UserResource;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 @Repository
 public class UserResourceRepositoryImpl implements UserResourceRepository{
@@ -72,7 +66,7 @@ public class UserResourceRepositoryImpl implements UserResourceRepository{
     public List<UserResource> findAll(){
         String endpoint = SERVICE_NAME + API_VERSION + "/users";
         try{
-            return Arrays.asList(restOperations.getForObject(endpoint, UserResource[].class));
+            return Arrays.asList(Objects.requireNonNull(restOperations.getForObject(endpoint, UserResource[].class)));
         } catch (HttpClientErrorException e){
             String errorCode = "SE0002";
             throw new SystemException(errorCode, messageSource.getMessage(errorCode,

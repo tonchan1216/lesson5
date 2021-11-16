@@ -1,14 +1,18 @@
 package com.example.lesson5.bff.app.web;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-
+import com.example.lesson5.bff.app.web.selenium.PortalPage;
+import com.example.lesson5.bff.app.web.selenium.SeleniumProperties;
+import com.example.lesson5.bff.config.TestConfig;
+import com.example.lesson5.bff.domain.repository.UserResourceRepository;
+import com.example.lesson5.bff.domain.service.OrchestrateService;
+import com.example.lesson5.bff.domain.service.SampleService;
+import com.example.lesson5.common.apinfra.exception.BusinessException;
+import com.example.lesson5.common.apinfra.exception.BusinessExceptionResponse;
+import com.example.lesson5.common.apinfra.exception.ErrorResponse;
+import com.example.lesson5.common.web.model.AddressResource;
+import com.example.lesson5.common.web.model.EmailResource;
+import com.example.lesson5.common.web.model.UserResource;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.BrowserVersion.BrowserVersionBuilder;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
@@ -17,25 +21,15 @@ import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -47,7 +41,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.htmlunit.MockMvcWebClientBuilder;
@@ -59,27 +53,22 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.example.lesson5.bff.config.TestConfig;
-import com.example.lesson5.bff.domain.service.OrchestrateService;
-import com.example.lesson5.bff.app.web.selenium.PortalPage;
-import com.example.lesson5.bff.app.web.selenium.SeleniumProperties;
-import com.example.lesson5.bff.domain.repository.UserResourceRepository;
-import com.example.lesson5.bff.domain.service.SampleService;
-import com.example.lesson5.common.apinfra.test.junit.E2ETest;
-import com.example.lesson5.common.apinfra.exception.BusinessException;
-import com.example.lesson5.common.apinfra.exception.BusinessExceptionResponse;
-import com.example.lesson5.common.apinfra.exception.ErrorResponse;
-import com.example.lesson5.common.web.model.AddressResource;
-import com.example.lesson5.common.web.model.EmailResource;
-import com.example.lesson5.common.web.model.UserResource;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
-@RunWith(Enclosed.class)
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.fail;
+
 public class BackendForFrontendControllerTest {
 
-    @RunWith(SpringRunner.class)
+    @Nested
+    @ExtendWith(SpringExtension.class)
     @WebMvcTest(controllers = BackendForFrontendController.class)
     @ContextConfiguration(classes = {TestConfig.ControllerTestConfig.class})
-    @Category(com.example.lesson5.common.apinfra.test.junit.UnitTest.class)
+    @Tag("UnitTest")
     public static class UnitTest{
 
         @Value("#{servletContext.contextPath}")
@@ -99,7 +88,7 @@ public class BackendForFrontendControllerTest {
         @MockBean
         OrchestrateService orchestrateServiceMock;
 
-        @Before
+        @BeforeEach
         public void setUp() throws Exception{
 
             BrowserVersionBuilder browserVersionBuilder = new BrowserVersionBuilder(BrowserVersion.CHROME);
@@ -151,7 +140,7 @@ public class BackendForFrontendControllerTest {
                     .familyName("マイナビ")
                     .loginId("taro.mynavi")
                     .address(address1)
-                    .emailList(Arrays.asList(new EmailResource[]{email1, email2}))
+                    .emailList(Arrays.asList(email1, email2))
                     .build();
 
             UserResource user2 = UserResource.builder()
@@ -160,13 +149,13 @@ public class BackendForFrontendControllerTest {
                     .familyName("マイナビ")
                     .loginId("hanako.mynavi")
                     .address(address2)
-                    .emailList(Arrays.asList(new EmailResource[]{email3, email4}))
+                    .emailList(Arrays.asList(email3, email4))
                     .build();
 
             Mockito.when(sampleServiceMock.getUser(Long.getLong("2")))
                     .thenThrow(new BusinessException("E0001"));
             Mockito.when(sampleServiceMock.getUsers())
-                    .thenReturn(Arrays.asList(new UserResource[]{user1, user2}));
+                    .thenReturn(Arrays.asList(user1, user2));
             Mockito.when(sampleServiceMock.existsUserOfLoginId("taro.mynavi"))
                     .thenReturn(true);
             Mockito.when(sampleServiceMock.existsUserOfLoginId("hanako.mynavi"))
@@ -179,34 +168,34 @@ public class BackendForFrontendControllerTest {
             HtmlPage page = webClient.getPage("http://localhost:8080" + contextPath + "/getUsers");
             assertThat(page.getTitleText(), is("GetUsers"));
             assertThat(page.getElementById("td-firstName-0")
-                    .getFirstChild().asText(), is("太郎"));
+                    .getFirstChild().getVisibleText(), is("太郎"));
             assertThat(page.getElementById("td-familyName-0")
-                    .getFirstChild().asText(), is("マイナビ"));
+                    .getFirstChild().getVisibleText(), is("マイナビ"));
             assertThat(page.getElementById("td-loginId-0")
-                    .getFirstChild().asText(), is("taro.mynavi"));
+                    .getFirstChild().getVisibleText(), is("taro.mynavi"));
             assertThat(page.getElementById("td-address-zipCode-0")
-                    .getFirstChild().asText(), is("100-0000"));
+                    .getFirstChild().getVisibleText(), is("100-0000"));
             assertThat(page.getElementById("td-address-address-0")
-                    .getFirstChild().asText(), is("Tokyo Chiyoda"));
+                    .getFirstChild().getVisibleText(), is("Tokyo Chiyoda"));
             assertThat(page.getElementById("td-email-0_email-0")
-                    .getFirstChild().asText(), is("taro.mynavi1@debugroom.org"));
+                    .getFirstChild().getVisibleText(), is("taro.mynavi1@debugroom.org"));
             assertThat(page.getElementById("td-email-0_email-1")
-                    .getFirstChild().asText(), is("taro.mynavi2@debugroom.org"));
+                    .getFirstChild().getVisibleText(), is("taro.mynavi2@debugroom.org"));
 
             assertThat(page.getElementById("td-firstName-1")
-                    .getFirstChild().asText(), is("花子"));
+                    .getFirstChild().getVisibleText(), is("花子"));
             assertThat(page.getElementById("td-familyName-1")
-                    .getFirstChild().asText(), is("マイナビ"));
+                    .getFirstChild().getVisibleText(), is("マイナビ"));
             assertThat(page.getElementById("td-loginId-1")
-                    .getFirstChild().asText(), is("hanako.mynavi"));
+                    .getFirstChild().getVisibleText(), is("hanako.mynavi"));
             assertThat(page.getElementById("td-address-zipCode-1")
-                    .getFirstChild().asText(), is("300-0000"));
+                    .getFirstChild().getVisibleText(), is("300-0000"));
             assertThat(page.getElementById("td-address-address-1")
-                    .getFirstChild().asText(), is("Tonde Saitama"));
+                    .getFirstChild().getVisibleText(), is("Tonde Saitama"));
             assertThat(page.getElementById("td-email-1_email-0")
-                    .getFirstChild().asText(), is("hanako.mynavi1@debugroom.org"));
+                    .getFirstChild().getVisibleText(), is("hanako.mynavi1@debugroom.org"));
             assertThat(page.getElementById("td-email-1_email-1")
-                    .getFirstChild().asText(), is("hanako.mynavi2@debugroom.org"));
+                    .getFirstChild().getVisibleText(), is("hanako.mynavi2@debugroom.org"));
         }
 
         @Test
@@ -234,7 +223,7 @@ public class BackendForFrontendControllerTest {
             webClient.waitForBackgroundJavaScript(10000);
             HtmlElement htmlElement = (HtmlElement)updatePage.getElementById("message-panel");
 
-            assertThat(htmlElement.getFirstChild().asText(), is("使用可能なログインIDです。"));
+            assertThat(htmlElement.getFirstChild().getVisibleText(), is("使用可能なログインIDです。"));
 
         }
 
@@ -248,13 +237,13 @@ public class BackendForFrontendControllerTest {
             webClient.waitForBackgroundJavaScript(10000);
             HtmlElement htmlElement = (HtmlElement)updatePage.getElementById("message-panel");
 
-            assertThat(htmlElement.getFirstChild().asText(), is("このログインIDは使用できません。"));
+            assertThat(htmlElement.getFirstChild().getVisibleText(), is("このログインIDは使用できません。"));
 
         }
 
         @Test
         public void addUsersInputParamTest() throws Exception{
-            MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.set("users[0].firstName", "taro");
             params.set("users[0].familyName", "mynavi");
             params.set("users[0].loginId", "taro.mynavi");
@@ -273,13 +262,13 @@ public class BackendForFrontendControllerTest {
                     .andReturn();
             ModelAndView modelAndView = mvcResult.getModelAndView();
 
-            assertThat(modelAndView.getViewName(), is("portal"));
+            assertThat(Objects.requireNonNull(modelAndView).getViewName(), is("portal"));
             BindingResult bindingResult = (BindingResult)
                     modelAndView.getModel().get("org.springframework.validation.BindingResult.addUsersForm");
 
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
             assertThat(fieldErrors.size(), is(6));
-            fieldErrors.stream().forEach(fieldError -> {
+            fieldErrors.forEach(fieldError -> {
                 switch (fieldError.getField()){
                     case  "users[1].firstName" :
                         assertThat(fieldError.getDefaultMessage(), is("1文字以上、50文字以下で入力してください。"));
@@ -307,13 +296,14 @@ public class BackendForFrontendControllerTest {
 
     }
 
-    @RunWith(SpringRunner.class)
+    @Nested
+    @ExtendWith(SpringExtension.class)
     @SpringBootTest(classes = {
             TestConfig.EndToEndTestConfig.class,
             BackendForFrontendControllerTest.EndToEndTest.Config.class
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-    @Category(E2ETest.class)
+    @TestMethodOrder(MethodOrderer.MethodName.class)
+    @Tag("E2ETest")
     public static class EndToEndTest{
 
         @Configuration
@@ -371,7 +361,7 @@ public class BackendForFrontendControllerTest {
         UserResourceRepository userResourceRepository;
 
 
-        @Before
+        @BeforeEach
         public void setUp(){
             portalPage.setWebDriver(webDriver);
         }
@@ -433,7 +423,7 @@ public class BackendForFrontendControllerTest {
             file.renameTo(new File(seleniumProperties.getEvidencePath() + "/addUserAbnormalTest_screenshot.png"));
         }
 
-        @After
+        @AfterEach
         public void shutdown(){
             webDriver.quit();
         }

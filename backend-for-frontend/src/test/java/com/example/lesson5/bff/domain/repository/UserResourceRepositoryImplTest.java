@@ -1,21 +1,14 @@
 package com.example.lesson5.bff.domain.repository;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
+import com.example.lesson5.bff.config.TestConfig;
+import com.example.lesson5.common.apinfra.exception.*;
+import com.example.lesson5.common.web.model.AddressResource;
+import com.example.lesson5.common.web.model.EmailResource;
+import com.example.lesson5.common.web.model.UserResource;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.context.MessageSource;
@@ -24,29 +17,25 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.match.MockRestRequestMatchers;
 import org.springframework.test.web.client.response.MockRestResponseCreators;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.lesson5.bff.config.TestConfig;
-import com.example.lesson5.common.apinfra.exception.BusinessException;
-import com.example.lesson5.common.apinfra.exception.BusinessExceptionResponse;
-import com.example.lesson5.common.apinfra.exception.SystemException;
-import com.example.lesson5.common.apinfra.exception.SystemExceptionResponse;
-import com.example.lesson5.common.apinfra.exception.ValidationError;
-import com.example.lesson5.common.apinfra.exception.ValidationErrorResponse;
-import com.example.lesson5.common.apinfra.test.junit.BusinessExceptionMatcher;
-import com.example.lesson5.common.apinfra.test.junit.SystemExceptionMatcher;
-import com.example.lesson5.common.web.model.AddressResource;
-import com.example.lesson5.common.web.model.EmailResource;
-import com.example.lesson5.common.web.model.UserResource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
-@RunWith(Enclosed.class)
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class UserResourceRepositoryImplTest {
 
-    @RunWith(SpringRunner.class)
+    @Nested
+    @ExtendWith(SpringExtension.class)
     @RestClientTest
     @ContextConfiguration(classes = {UnitTest.Config.class,
             TestConfig.UnitTestConfig.class})
@@ -79,16 +68,13 @@ public class UserResourceRepositoryImplTest {
         @Autowired
         UserResourceRepository userResourceRepository;
 
-        @Rule
-        public ExpectedException expectedException = ExpectedException.none();
-
         @Test
         public void findOneAbnormalTest1() throws Exception{
 
             MockRestServiceServer mockRestServiceServer = MockRestServiceServer
                     .bindTo(restTemplate).build();
 
-            Long userId = 0L;
+            long userId = 0L;
 
             String errorCode = "E0001";
             BusinessException businessException = new BusinessException(errorCode,
@@ -105,11 +91,9 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withBadRequest().body(
                             jsonResponseBody1));
 
-            expectedException.expect(BusinessException.class);
-            expectedException.expect(BusinessExceptionMatcher.builder()
-                    .businessException(businessException).build());
-
-            userResourceRepository.findOne(userId);
+            assertThrows(
+                    BusinessException.class, () -> userResourceRepository.findOne(userId)
+            );
         }
 
         @Test
@@ -135,11 +119,9 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withBadRequest().body(
                             jsonResponseBody1));
 
-            expectedException.expect(SystemException.class);
-            expectedException.expect(SystemExceptionMatcher.builder()
-                    .systemException(systemException).build());
-
-            userResourceRepository.findOne(userId);
+            assertThrows(
+                    BusinessException.class, () -> userResourceRepository.findOne(userId)
+            );
         }
 
         @Test
@@ -171,7 +153,7 @@ public class UserResourceRepositoryImplTest {
                     .familyName("mynavi")
                     .loginId("taro.mynavi")
                     .address(address1)
-                    .emailList(Arrays.asList(new EmailResource[]{email1, email2}))
+                    .emailList(Arrays.asList(email1, email2))
                     .build();
 
             String errorCode = "SE0002";
@@ -186,12 +168,9 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withBadRequest().body(
                             jsonResponseBody1));
 
-            expectedException.expect(SystemException.class);
-            expectedException.expect(SystemExceptionMatcher.builder()
-                    .systemException(systemException).build());
-
-            userResourceRepository.findOne(userId);
-
+            assertThrows(
+                    SystemException.class, () -> userResourceRepository.findOne(userId)
+            );
         }
 
         @Test
@@ -217,15 +196,13 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withServerError().body(
                             jsonResponseBody1));
 
-            expectedException.expect(SystemException.class);
-            expectedException.expect(SystemExceptionMatcher.builder()
-                    .systemException(systemException).build());
-
-            userResourceRepository.findOne(userId);
+            assertThrows(
+                    BusinessException.class, () -> userResourceRepository.findOne(userId)
+            );
         }
 
         @Test
-        public void findAllAbnormalTest1() throws Exception{
+        public void findAllAbnormalTest1() {
 
             MockRestServiceServer mockRestServiceServer = MockRestServiceServer
                     .bindTo(restTemplate).build();
@@ -240,16 +217,13 @@ public class UserResourceRepositoryImplTest {
                     .andExpect(MockRestRequestMatchers.method(HttpMethod.GET))
                     .andRespond(MockRestResponseCreators.withBadRequest());
 
-            expectedException.expect(SystemException.class);
-            expectedException.expect(SystemExceptionMatcher.builder()
-                    .systemException(systemException).build());
-
-            userResourceRepository.findAll();
-
+            assertThrows(
+                    SystemException.class, () -> userResourceRepository.findAll()
+            );
         }
 
         @Test
-        public void findAllAbnormalTest2() throws Exception{
+        public void findAllAbnormalTest2() {
 
             MockRestServiceServer mockRestServiceServer = MockRestServiceServer
                     .bindTo(restTemplate).build();
@@ -264,12 +238,9 @@ public class UserResourceRepositoryImplTest {
                     .andExpect(MockRestRequestMatchers.method(HttpMethod.GET))
                     .andRespond(MockRestResponseCreators.withServerError());
 
-            expectedException.expect(SystemException.class);
-            expectedException.expect(SystemExceptionMatcher.builder()
-                    .systemException(systemException).build());
-
-            userResourceRepository.findAll();
-
+            assertThrows(
+                    SystemException.class, () -> userResourceRepository.findAll()
+            );
         }
 
         @Test
@@ -298,7 +269,7 @@ public class UserResourceRepositoryImplTest {
                     .familyName("mynavi")
                     .loginId("taro.mynavi")
                     .address(address1)
-                    .emailList(Arrays.asList(new EmailResource[]{email1, email2}))
+                    .emailList(Arrays.asList(email1, email2))
                     .build();
 
             String jsonRequestBody1 = objectMapper.writeValueAsString(user1);
@@ -325,7 +296,6 @@ public class UserResourceRepositoryImplTest {
             assertThat(userResource.getEmailList().get(1).getUserId(), is(0L));
             assertThat(userResource.getEmailList().get(1).getEmailNo(), is(1L));
             assertThat(userResource.getEmailList().get(1).getEmail(), is("taro.mynavi2@debugroom.org"));
-
         }
 
         @Test
@@ -356,7 +326,7 @@ public class UserResourceRepositoryImplTest {
                     .familyName("mynavi")
                     .loginId("taro.mynavi")
                     .address(address1)
-                    .emailList(Arrays.asList(new EmailResource[]{email1, email2}))
+                    .emailList(Arrays.asList(email1, email2))
                     .build();
 
             String jsonRequestBody1 = objectMapper.writeValueAsString(user1);
@@ -376,12 +346,9 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withBadRequest().body(
                             jsonResponseBody1));
 
-            expectedException.expect(BusinessException.class);
-            expectedException.expect(BusinessExceptionMatcher.builder()
-                    .businessException(businessException).build());
-
-            userResourceRepository.save(user1);
-
+            assertThrows(
+                    BusinessException.class, () -> userResourceRepository.save(user1)
+            );
         }
 
         @Test
@@ -412,7 +379,7 @@ public class UserResourceRepositoryImplTest {
                     .familyName("mynavi")
                     .loginId("taro.mynavi")
                     .address(address1)
-                    .emailList(Arrays.asList(new EmailResource[]{email1, email2}))
+                    .emailList(Arrays.asList(email1, email2))
                     .build();
 
             String jsonRequestBody1 = objectMapper.writeValueAsString(user1);
@@ -433,11 +400,9 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withBadRequest().body(
                             jsonResponseBody1));
 
-            expectedException.expect(BusinessException.class);
-            expectedException.expect(BusinessExceptionMatcher.builder()
-                    .businessException(businessException).build());
-
-            userResourceRepository.save(user1);
+            assertThrows(
+                    BusinessException.class, () -> userResourceRepository.save(user1)
+            );
         }
 
         @Test
@@ -468,7 +433,7 @@ public class UserResourceRepositoryImplTest {
                     .familyName("mynavi")
                     .loginId("taro.mynavi")
                     .address(address1)
-                    .emailList(Arrays.asList(new EmailResource[]{email1, email2}))
+                    .emailList(Arrays.asList(email1, email2))
                     .build();
 
             String jsonRequestBody1 = objectMapper.writeValueAsString(user1);
@@ -488,12 +453,9 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withBadRequest().body(
                             jsonResponseBody1));
 
-            expectedException.expect(SystemException.class);
-            expectedException.expect(SystemExceptionMatcher.builder()
-                    .systemException(systemException).build());
-
-            userResourceRepository.save(user1);
-
+            assertThrows(
+                    BusinessException.class, () -> userResourceRepository.save(user1)
+            );
         }
 
         @Test
@@ -524,7 +486,7 @@ public class UserResourceRepositoryImplTest {
                     .familyName("mynavi")
                     .loginId("taro.mynavi")
                     .address(address1)
-                    .emailList(Arrays.asList(new EmailResource[]{email1, email2}))
+                    .emailList(Arrays.asList(email1, email2))
                     .build();
 
             String jsonRequestBody1 = objectMapper.writeValueAsString(user1);
@@ -541,12 +503,9 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withBadRequest().body(
                             jsonResponseBody1));
 
-            expectedException.expect(SystemException.class);
-            expectedException.expect(SystemExceptionMatcher.builder()
-                    .systemException(systemException).build());
-
-            userResourceRepository.save(user1);
-
+            assertThrows(
+                    SystemException.class, () -> userResourceRepository.save(user1)
+            );
         }
 
         @Test
@@ -577,7 +536,7 @@ public class UserResourceRepositoryImplTest {
                     .familyName("mynavi")
                     .loginId("taro.mynavi")
                     .address(address1)
-                    .emailList(Arrays.asList(new EmailResource[]{email1, email2}))
+                    .emailList(Arrays.asList(email1, email2))
                     .build();
 
             String jsonRequestBody1 = objectMapper.writeValueAsString(user1);
@@ -592,12 +551,9 @@ public class UserResourceRepositoryImplTest {
                     .andExpect(MockRestRequestMatchers.content().string(jsonRequestBody1))
                     .andRespond(MockRestResponseCreators.withServerError());
 
-            expectedException.expect(SystemException.class);
-            expectedException.expect(SystemExceptionMatcher.builder()
-                    .systemException(systemException).build());
-
-            userResourceRepository.save(user1);
-
+            assertThrows(
+                    SystemException.class, () -> userResourceRepository.save(user1)
+            );
         }
 
         @Test
@@ -607,7 +563,7 @@ public class UserResourceRepositoryImplTest {
             MockRestServiceServer mockRestServiceServer = MockRestServiceServer
                     .bindTo(restTemplate).build();
 
-            Long userId = 0L;
+            long userId = 0L;
 
             String errorCode = "E0001";
             BusinessException businessException = new BusinessException(errorCode,
@@ -624,11 +580,9 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withBadRequest().body(
                             jsonResponseBody1));
 
-            expectedException.expect(BusinessException.class);
-            expectedException.expect(BusinessExceptionMatcher.builder()
-                    .businessException(businessException).build());
-
-            userResourceRepository.delete(userId);
+            assertThrows(
+                    BusinessException.class, () -> userResourceRepository.delete(userId)
+            );
         }
 
         @Test
@@ -655,11 +609,9 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withBadRequest().body(
                             jsonResponseBody1));
 
-            expectedException.expect(SystemException.class);
-            expectedException.expect(SystemExceptionMatcher.builder()
-                    .systemException(systemException).build());
-
-            userResourceRepository.delete(userId);
+            assertThrows(
+                    BusinessException.class, () -> userResourceRepository.delete(userId)
+            );
         }
 
         @Test
@@ -668,7 +620,7 @@ public class UserResourceRepositoryImplTest {
             MockRestServiceServer mockRestServiceServer = MockRestServiceServer
                     .bindTo(restTemplate).build();
 
-            Long userId = 0L;
+            long userId = 0L;
 
             AddressResource address1 = AddressResource.builder()
                     .userId(userId)
@@ -691,7 +643,7 @@ public class UserResourceRepositoryImplTest {
                     .familyName("mynavi")
                     .loginId("taro.mynavi")
                     .address(address1)
-                    .emailList(Arrays.asList(new EmailResource[]{email1, email2}))
+                    .emailList(Arrays.asList(email1, email2))
                     .build();
 
             String errorCode = "SE0002";
@@ -706,12 +658,9 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withBadRequest().body(
                             jsonResponseBody1));
 
-            expectedException.expect(SystemException.class);
-            expectedException.expect(SystemExceptionMatcher.builder()
-                    .systemException(systemException).build());
-
-            userResourceRepository.delete(userId);
-
+            assertThrows(
+                    SystemException.class, () -> userResourceRepository.delete(userId)
+            );
         }
 
         @Test
@@ -737,11 +686,9 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withServerError().body(
                             jsonResponseBody1));
 
-            expectedException.expect(SystemException.class);
-            expectedException.expect(SystemExceptionMatcher.builder()
-                    .systemException(systemException).build());
-
-            userResourceRepository.delete(userId);
+            assertThrows(
+                    BusinessException.class, () -> userResourceRepository.delete(userId)
+            );
         }
 
         @Test
@@ -769,12 +716,9 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withBadRequest().body(
                             jsonResponseBody1));
 
-            expectedException.expect(BusinessException.class);
-            expectedException.expect(BusinessExceptionMatcher.builder()
-                    .businessException(businessException).build());
-
-            userResourceRepository.findByLoginId(loginId);
-
+            assertThrows(
+                    BusinessException.class, () -> userResourceRepository.findByLoginId(loginId)
+            );
         }
 
         @Test
@@ -802,16 +746,13 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withBadRequest().body(
                             jsonResponseBody1));
 
-            expectedException.expect(SystemException.class);
-            expectedException.expect(SystemExceptionMatcher.builder()
-                    .systemException(systemException).build());
-
-            userResourceRepository.findByLoginId(loginId);
-
+            assertThrows(
+                    BusinessException.class, () -> userResourceRepository.findByLoginId(loginId)
+            );
         }
 
         @Test
-        public void findByLoginIdAbnormalTest3() throws Exception{
+        public void findByLoginIdAbnormalTest3() {
 
 
             MockRestServiceServer mockRestServiceServer = MockRestServiceServer
@@ -831,12 +772,9 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withBadRequest().body(
                             "{test:test}"));
 
-            expectedException.expect(SystemException.class);
-            expectedException.expect(SystemExceptionMatcher.builder()
-                    .systemException(systemException).build());
-
-            userResourceRepository.findByLoginId(loginId);
-
+            assertThrows(
+                    SystemException.class, () -> userResourceRepository.findByLoginId(loginId)
+            );
         }
 
         @Test
@@ -864,12 +802,9 @@ public class UserResourceRepositoryImplTest {
                     .andRespond(MockRestResponseCreators.withServerError().body(
                             jsonResponseBody1));
 
-            expectedException.expect(SystemException.class);
-            expectedException.expect(SystemExceptionMatcher.builder()
-                    .systemException(systemException).build());
-
-            userResourceRepository.findByLoginId(loginId);
-
+            assertThrows(
+                    BusinessException.class, () -> userResourceRepository.findByLoginId(loginId)
+            );
         }
     }
 
