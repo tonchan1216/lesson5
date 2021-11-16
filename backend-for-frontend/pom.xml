@@ -91,7 +91,7 @@
                 <plugin>
                   <artifactId>maven-surefire-plugin</artifactId>
                   <configuration>
-                    <excludedGroups>com.example.lesson5.common.apinfra.test.junit.E2ETest</excludedGroups>
+                    <groups>UnitTest</groups>
                   </configuration>
                 </plugin>
               </plugins>
@@ -107,7 +107,7 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <excludedGroups>com.example.lesson5.common.apinfra.test.junit.UnitTest</excludedGroups>
+                            <groups>E2ETest</groups>
                         </configuration>
                     </plugin>
                 </plugins>
