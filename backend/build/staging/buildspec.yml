@@ -1,0 +1,29 @@
+version: 0.2
+env:
+  variables:
+    IMAGE_REPO_NAME: "cleartone1216/lesson5-backend"
+    IMAGE_TAG: "latest"
+  parameter-store:
+    DOCKER_USER: "ma-furutanito-docker-user"
+    DOCKER_PASSWORD: "ma-furutanito-docker-password"
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Docker Hub...
+      - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG backend/build/production
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $IMAGE_REPO_NAME:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $IMAGE_REPO_NAME:$IMAGE_TAG
+      - printf '[{"name":"lesson5-backend-staging","imageUri":"%s"}]' $IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
