@@ -1,6 +1,5 @@
 # Arguments
 ARG APP_PATH="/usr/local/lesson5"
-ARG MODULE_NAME="lesson5-bff-0.0.1-SNAPSHOT"
 
 # Build Image
 FROM adoptopenjdk/maven-openjdk11:latest AS builder
@@ -15,15 +14,14 @@ RUN mvn package -Dmaven.test.skip=true -f ${APP_PATH}/backend-for-frontend/pom.x
 # Deploy Image
 FROM adoptopenjdk/openjdk11:alpine-slim
 ARG APP_PATH
-ARG MODULE_NAME
 
 RUN apk --update add tzdata && \
     cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
     apk del tzdata && \
     rm -rf /var/cache/apk/* && \
     mkdir -p /opt/app/
-COPY --from=builder ${APP_PATH}/backend-for-frontend/target/${MODULE_NAME}.jar /opt/app/
+COPY --from=builder ${APP_PATH}/backend-for-frontend/target/lesson5-bff-0.0.1-SNAPSHOT.jar /opt/app/
 
 EXPOSE 8080
 
-CMD java -jar -Dspring.profiles.active=production /opt/app/${MODULE_NAME}.jar
+CMD java -jar -Dspring.profiles.active=production /opt/app/lesson5-bff-0.0.1-SNAPSHOT.jar
